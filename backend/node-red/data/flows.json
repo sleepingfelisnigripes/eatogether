@@ -1,0 +1,212 @@
+[
+    {
+        "id": "9d44931fbddf8220",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5a455541.3fdcac",
+        "type": "tab",
+        "label": "bcrypt",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b1fda389a7c4172e",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "db",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "eatogether",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "postgres",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "73da02bcce74398b",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "query": "SELECT * FROM users;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 310,
+        "y": 160,
+        "wires": [
+            [
+                "4b397ec845a82344"
+            ]
+        ]
+    },
+    {
+        "id": "224436dea3d75e50",
+        "type": "inject",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "73da02bcce74398b"
+            ]
+        ]
+    },
+    {
+        "id": "4b397ec845a82344",
+        "type": "debug",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "af259b3b7e935af2",
+        "type": "bcrypt",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "action": "encrypt",
+        "field": "payload",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 390,
+        "y": 120,
+        "wires": [
+            [
+                "98bc3828eacd2493",
+                "5daeb7edb932b684"
+            ]
+        ]
+    },
+    {
+        "id": "551d0a9b42c3cffb",
+        "type": "inject",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "plaintext",
+                "v": "ABCDE",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "ABCDE",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "af259b3b7e935af2"
+            ]
+        ]
+    },
+    {
+        "id": "98bc3828eacd2493",
+        "type": "debug",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 610,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "5daeb7edb932b684",
+        "type": "bcrypt",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "action": "verify",
+        "field": "plaintext",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 400,
+        "y": 200,
+        "wires": [
+            [
+                "2d76c8f00c87c6f5"
+            ]
+        ]
+    },
+    {
+        "id": "2d76c8f00c87c6f5",
+        "type": "debug",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 200,
+        "wires": []
+    }
+]

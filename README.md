@@ -1,7 +1,7 @@
 # eatogether
 a mobile app:)
 
-## Front end: Expo React Native App
+## Frontend: Expo React Native App
 ### 1. Install dependencies
 Run `npm install`
 
@@ -11,3 +11,17 @@ Run
 cd ./frontend/eatogether
 npx expo start 
 ```
+---
+## Backend: Node-red and Postgres with Docker Compose
+
+### 1. Install docker and docker-compose
+### 2. Run docker-compose script
+```
+cd ./backend
+docker-compose up
+```
+
+### 3. Visit node-red UI for backend flows
+Go to http://localhost:1880
+
+Log in as User: `admin` password: `COMP90018`
