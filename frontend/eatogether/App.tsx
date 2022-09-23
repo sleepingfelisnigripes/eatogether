@@ -8,8 +8,16 @@ import RestaurantsScreen from "./src/screens/RestaurantsScreen";
 import MyGroupsScreen from "./src/screens/MyGroupsScreen";
 import { Ionicons } from "@expo/vector-icons";
 
-const Tab = createBottomTabNavigator();
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
+
+export type RootTabParamList = {
+  Home: {};
+  Restaurants: {};
+  "My Groups": {};
+  Profile: {};
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 function MyTabs() {
   return (
