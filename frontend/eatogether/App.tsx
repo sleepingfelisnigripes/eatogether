@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import HomeScreen from "./src/screens/HomeScreen";
-import RestaurantScreen from "./src/screens/RestaurantScreen";
+import RestaurantsScreen from "./src/screens/RestaurantsScreen";
 import MyGroupsScreen from "./src/screens/MyGroupsScreen";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -20,7 +20,7 @@ function MyTabs() {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Restaurant") {
+          } else if (route.name === "Restaurants") {
             iconName = focused ? "restaurant" : "restaurant-outline";
           } else if (route.name === "My Groups") {
             iconName = focused
@@ -39,7 +39,7 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Restaurant" component={RestaurantScreen} />
+      <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
       <Tab.Screen name="My Groups" component={MyGroupsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
 
-export default function RestaurantScreen() {
+export default function RestaurantsScreen() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Restaurant Screen</Text>
+      <Text>Restaurants Screen</Text>
     </View>
   );
 }
