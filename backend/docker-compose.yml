@@ -10,8 +10,8 @@ services:
     image: cloudflare/cloudflared:latest
     environment:
       - TZ=Australia/Melbourne
-    volumes:
-      - ./cloudflared/.cloudflared:/etc/cloudflared
+    # volumes:
+    #   - ./cloudflared/.cloudflared:/etc/cloudflared
     command: 'tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}'
     depends_on:
       - nodered
