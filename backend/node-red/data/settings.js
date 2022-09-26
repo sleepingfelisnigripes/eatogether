@@ -78,7 +78,7 @@ module.exports = {
       {
         username: "admin",
         password:
-          "$2b$08$A//WRPWFte57Q8tiliNjreiIyKVwmZu62iY2nWtZJz0KlS..Y2ZQ6",
+          "$2b$08$t9h1sMM0zKmLuqwZd8Np2eHoBJbKYqtObC8W84O45ZKg/c3gSp9g2",
         permissions: "*",
       },
     ],
@@ -92,10 +92,10 @@ module.exports = {
    */
 
   /** Option 1: static object */
-  //https: {
-  //  key: require("fs").readFileSync('privkey.pem'),
-  //  cert: require("fs").readFileSync('cert.pem')
-  //},
+  https: {
+    key: require("fs").readFileSync("/data/certs/node-key.pem"),
+    cert: require("fs").readFileSync("/data/certs/node-cert.pem"),
+  },
 
   /** Option 2: function that returns the HTTP configuration object */
   // https: function() {
@@ -116,7 +116,7 @@ module.exports = {
   /** The following property can be used to cause insecure HTTP connections to
    * be redirected to HTTPS.
    */
-  //requireHttps: true,
+  requireHttps: true,
 
   /** To password protect the node-defined HTTP endpoints (httpNodeRoot),
    * including node-red-dashboard, or the static content (httpStatic), the
@@ -166,7 +166,7 @@ module.exports = {
    * The following property can be used to specify a different root path.
    * If set to false, this is disabled.
    */
-  //httpAdminRoot: '/admin',
+  httpAdminRoot: "/admin",
 
   /** The following property can be used to add a custom middleware function
    * in front of all admin http routes. For example, to set custom http

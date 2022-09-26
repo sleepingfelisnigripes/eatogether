@@ -124,3 +124,6 @@ dist
 
 # Mac
 .DS_Store
+
+# Certs
+*.pem
