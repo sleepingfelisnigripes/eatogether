@@ -2,6 +2,7 @@ version: '3.8'
 services:
   nodered:
     image: nodered/node-red:2.2.3-12
+    restart: on-failure
     ports:
       - '1880:1880'
     environment:
@@ -12,7 +13,7 @@ services:
       - db
   db:
     image: postgres:14.1-alpine
-    restart: always
+    restart: on-failure
     environment:
       - TZ=Australia/Melbourne
       - PGTZ=Australia/Melbourne
