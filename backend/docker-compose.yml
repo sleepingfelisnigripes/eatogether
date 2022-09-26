@@ -54,7 +54,7 @@ services:
       - TZ=Australia/Melbourne
       - PGTZ=Australia/Melbourne
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${PG_ADMIN_PASSWORD:-postgres$2022}
+      - POSTGRES_PASSWORD=${PG_ADMIN_PASSWORD:-postgres2022}
     # ports:
     #   - '5432:5432'
     volumes: 
