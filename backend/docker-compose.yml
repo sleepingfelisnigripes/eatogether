@@ -8,13 +8,29 @@ services:
     image: cloudflare/cloudflared:latest
     environment:
       - TZ=Australia/Melbourne
-    command: 'tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}'
+    command: 'tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN_NR}'
     depends_on:
       - nodered
     networks:
       - app-network
 
+  tunnel-db:
+    container_name: tunnel-db
+    hostname: tunnel-db
+    restart: unless-stopped
+    # Image for x64 system
+    image: cloudflare/cloudflared:latest
+    environment:
+      - TZ=Australia/Melbourne
+    command: 'tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN_DB}'
+    depends_on:
+      - db
+    networks:
+      - app-network
+
   nodered:
+    container_name: nodered
+    hostname: nodered
     image: nodered/node-red:2.2.3-12
     restart: unless-stopped
     # Ports not directly exposed, instead thru cloudflare tunnel
@@ -30,13 +46,15 @@ services:
       - app-network
   
   db:
+    container_name: db
+    hostname: db
     image: postgres:14.1-alpine
     restart: unless-stopped
     environment:
       - TZ=Australia/Melbourne
       - PGTZ=Australia/Melbourne
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=C0MP90018#PG
+      - POSTGRES_PASSWORD=${PG_ADMIN_PASSWORD:-postgres$2022}
     # ports:
     #   - '5432:5432'
     volumes: 
