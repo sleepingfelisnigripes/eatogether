@@ -24,4 +24,4 @@ docker-compose up
 ### 3. Visit node-red UI for backend flows
 Go to http://localhost:1880
 
-Log in as User: `admin` password: `COMP90018`
+Log in as User: `admin` password: `COMP90018$`

@@ -3,6 +3,8 @@ services:
   tunnel:
     container_name: tunnel
     hostname: tunnel
+    env_file:
+      - ./docker.env
     restart: unless-stopped
     # Image for x64 system
     image: cloudflare/cloudflared:latest
@@ -10,7 +12,7 @@ services:
       - TZ=Australia/Melbourne
     volumes:
       - ./cloudflared/.cloudflared:/etc/cloudflared
-    command: 'tunnel --no-autoupdate run 8ab1df03-3871-4a70-a390-c3a897c09741'
+    command: 'tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}'
     depends_on:
       - nodered
     networks:
