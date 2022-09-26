@@ -19,8 +19,9 @@ services:
   nodered:
     image: nodered/node-red:2.2.3-12
     restart: unless-stopped
-    ports:
-      - '1880:1880'
+    # Ports not directly exposed, instead thru cloudflare tunnel
+    # ports:
+    #   - '1880:1880'
     environment:
       - TZ=Australia/Melbourne
     volumes: 
@@ -37,9 +38,9 @@ services:
       - TZ=Australia/Melbourne
       - PGTZ=Australia/Melbourne
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
+      - POSTGRES_PASSWORD=C0MP90018#PG
+    # ports:
+    #   - '5432:5432'
     volumes: 
       - "./postgresql/data:/var/lib/postgresql/data"
     networks:
