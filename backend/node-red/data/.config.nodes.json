@@ -443,5 +443,25 @@
                 "file": "/data/node_modules/node-red-contrib-bcrypt/bcrypt/bcrypt.js"
             }
         }
+    },
+    "node-red-contrib-jwt": {
+        "name": "node-red-contrib-jwt",
+        "version": "0.1.0",
+        "local": true,
+        "user": true,
+        "nodes": {
+            "jwt": {
+                "name": "jwt",
+                "types": [
+                    "jwt sign",
+                    "jwt verify"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-jwt",
+                "file": "/data/node_modules/node-red-contrib-jwt/jwt.js"
+            }
+        }
     }
 }
