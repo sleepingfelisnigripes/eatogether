@@ -22,6 +22,7 @@ docker-compose up
 ```
 
 ### 3. Visit node-red UI for backend flows
-Go to http://localhost:1880
+Go to https://localhost:1880/et-admin
+(Our production backend is deployed on https://api.eatogether.site/et-admin)
 
 Log in as User: `admin` password: `COMP90018$`
