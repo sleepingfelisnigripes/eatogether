@@ -1,0 +1,1511 @@
+[
+    {
+        "id": "9d44931fbddf8220",
+        "type": "tab",
+        "label": "Eatogether API",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "614fbde873f759f7",
+        "type": "tab",
+        "label": "API Error Handling",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "11a6bc149c21cc99",
+        "type": "tab",
+        "label": "Database access",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5a455541.3fdcac",
+        "type": "tab",
+        "label": "bcrypt",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b1fda389a7c4172e",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "db",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "eatogether",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "C0MP90018@@",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "891b973e774e13df",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 100,
+        "wires": [
+            [
+                "bdf1aad8c4b1b8e6"
+            ]
+        ]
+    },
+    {
+        "id": "a074f7884e45867f",
+        "type": "http response",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "statusCode": "400",
+        "headers": {},
+        "x": 480,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "bdf1aad8c4b1b8e6",
+        "type": "template",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<h1>Eatogether</h1>\n<h2>Coming soon...</h2>",
+        "output": "str",
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "a074f7884e45867f"
+            ]
+        ]
+    },
+    {
+        "id": "cdfb806d0f2597eb",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/restaurants",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 220,
+        "wires": [
+            [
+                "1b575f2775cdf3f7"
+            ]
+        ]
+    },
+    {
+        "id": "1b575f2775cdf3f7",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET all restaurants",
+        "query": "SELECT * FROM restaurant\nORDER BY restaurant_id ASC;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 370,
+        "y": 220,
+        "wires": [
+            [
+                "c0dbb572d4ae5c70"
+            ]
+        ]
+    },
+    {
+        "id": "7b430bad98d3fd06",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/restaurants/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 360,
+        "wires": [
+            [
+                "4e51c5df855b6781"
+            ]
+        ]
+    },
+    {
+        "id": "744ccc6ff2fb869f",
+        "type": "http response",
+        "z": "9d44931fbddf8220",
+        "name": "HTTP Response (200)",
+        "statusCode": "200",
+        "headers": {},
+        "x": 800,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "bb523e0979386561",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET restaurant where restaurant_id=$id",
+        "query": "SELECT * \nFROM restaurant\nWHERE restaurant_id=$id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 720,
+        "y": 360,
+        "wires": [
+            [
+                "39dee466b9dbb8ef"
+            ]
+        ]
+    },
+    {
+        "id": "4e51c5df855b6781",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n    restaurantID: item.restaurant_id,\n    restaurantName: item.restaurant_name,\n    restaurantImage: item.restaurant_image,  // URL of the main/facade image of the restaurant\n    noOfGroupsToday: 0,  // Number of existing groups for today\n    cuisineType: item.restaurant_cuisine_type,      // Type of cuisine served\n    address: item.restaurant_address,          // address of the restaurant\n    latlng: [item.restaurant_lat, item.restaurant_lng],          // LatLng coordinate of the restaurant\n    openingHours: item.restaurant_open_hours,     // Opening hours of the restaurant, e.g. 10:00am-9:00pm\n    rating: 3,           // Average rating of the restaurant (0-5 stars)\n    reviews: [\"Some reviews\"],\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 360,
+        "wires": [
+            [
+                "bb523e0979386561"
+            ]
+        ]
+    },
+    {
+        "id": "90e4a964f0c241a3",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "Homepage",
+        "info": "",
+        "x": 120,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "9c49652565df6d89",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /restaurants",
+        "info": "",
+        "x": 160,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "32d9ea8b4936bf2c",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /restaurants/:id",
+        "info": "",
+        "x": 170,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "c0dbb572d4ae5c70",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields",
+        "func": "\nmsg.payload = msg.payload.map((item) => ({\n    restaurantID: item.restaurant_id,\n    restaurantName: item.restaurant_name,\n    restaurantImage: item.restaurant_image,  // URL of the main/facade image of the restaurant\n    noOfGroupsToday: 0,  // Number of existing groups for today\n    cuisineType: item.restaurant_cuisine_type,      // Type of cuisine served\n    address: item.restaurant_address,          // address of the restaurant\n    latlng: [item.restaurant_lat, item.restaurant_lng],          // LatLng coordinate of the restaurant\n    openingHours: item.restaurant_open_hours,     // Opening hours of the restaurant, e.g. 10:00am-9:00pm\n    rating: 3,           // Average rating of the restaurant (0-5 stars)\n    reviews: [\"Some reviews\"]\n}))\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 220,
+        "wires": [
+            [
+                "744ccc6ff2fb869f"
+            ]
+        ]
+    },
+    {
+        "id": "13c8b2f72e986e36",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n    reviewID: item.review_id,\n    timestamp: moment(item.review_timestamp).format(),        // String type in ISO 8601 format, e.g. \"2022-09-26T13:25:40+10:00\"\n    reviewerID: item.reviewer_id,       // The user ID of the review poster\n    reviewerName: item.username,     // The name of the reviewer\n    reviewRating: item.review_stars,     // The rating given by the review user\n    reviewText: item.review_text,       // Text content of the review\n    reviewImages: item.review_images,   // Urls of review reviewImages\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment"
+            }
+        ],
+        "x": 400,
+        "y": 480,
+        "wires": [
+            [
+                "6d999b7f48b8ff9c"
+            ]
+        ]
+    },
+    {
+        "id": "8efaf43f303d44ee",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/reviews/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 480,
+        "wires": [
+            [
+                "13c8b2f72e986e36"
+            ]
+        ]
+    },
+    {
+        "id": "83799dc4dc5ffcc3",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /reviews/:id",
+        "info": "",
+        "x": 160,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "6d999b7f48b8ff9c",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET review where review_id=$id",
+        "query": "SELECT review.*\n, public.user.username\n-- , restaurant.restaurant_name\nFROM review\nINNER JOIN public.user\nON review.reviewer_id = public.user.user_id\n-- INNER JOIN restaurant\n-- ON review.restaurant_id = restaurant.restaurant_id\nWHERE review_id = $id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 690,
+        "y": 480,
+        "wires": [
+            [
+                "51867494ecd4ba64"
+            ]
+        ]
+    },
+    {
+        "id": "69d8a851bef8d088",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields",
+        "func": "\nmsg.payload = msg.payload.map(msg.rename_fn)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 223,
+        "y": 1255,
+        "wires": [
+            [
+                "3d2dcb91d122c767"
+            ]
+        ]
+    },
+    {
+        "id": "3d2dcb91d122c767",
+        "type": "switch",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 393,
+        "y": 1255,
+        "wires": [
+            [
+                "977c4af54a420479"
+            ],
+            [
+                "f71ee2c1c887986b"
+            ]
+        ],
+        "outputLabels": [
+            "Non-empty",
+            "Empty"
+        ]
+    },
+    {
+        "id": "977c4af54a420479",
+        "type": "change",
+        "z": "9d44931fbddf8220",
+        "name": "Get first element",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.0",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 1220,
+        "wires": [
+            [
+                "db641955cfd2e39c"
+            ]
+        ]
+    },
+    {
+        "id": "f71ee2c1c887986b",
+        "type": "link out",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "613dc68a1eb615e7",
+            "01b529cd88b7521f"
+        ],
+        "x": 528,
+        "y": 1295,
+        "wires": []
+    },
+    {
+        "id": "db641955cfd2e39c",
+        "type": "http response",
+        "z": "9d44931fbddf8220",
+        "name": "HTTP response (200)",
+        "statusCode": "200",
+        "headers": {},
+        "x": 820,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "b6098d7d3e7a440c",
+        "type": "link in",
+        "z": "9d44931fbddf8220",
+        "name": "[IN] Rename fields and return first one element",
+        "links": [
+            "39dee466b9dbb8ef",
+            "51867494ecd4ba64",
+            "7853acc0ab811e98",
+            "dd5b3de2aef8f143",
+            "7d61c8d841b27e38"
+        ],
+        "x": 88,
+        "y": 1255,
+        "wires": [
+            [
+                "69d8a851bef8d088"
+            ]
+        ]
+    },
+    {
+        "id": "51867494ecd4ba64",
+        "type": "link out",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "b6098d7d3e7a440c"
+        ],
+        "x": 885,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "39dee466b9dbb8ef",
+        "type": "link out",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "b6098d7d3e7a440c"
+        ],
+        "x": 915,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "0b833ad22fdf6db1",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields and return SINGLE element (first element)",
+        "info": "",
+        "x": 273,
+        "y": 1195,
+        "wires": []
+    },
+    {
+        "id": "2e5d6ea0ff34c392",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n    groupID: item.group_id,\n    restaurantID: item.restaurant_id,         // The restaurant that the group is going\n    initUserID: item.init_user_id,           // User ID of the user who initiated the group\n    timestamp: moment(item.group_meeting_timestamp).format(),            // Timestamp of the meeting. String type in ISO 8601 format, e.g. \"2022-09-26T13:25:40+10:00\"\n    maxParticipants: item.group_maximum,      // Number of maximum participants\n    currentParticipants: 0,  // Current number of participants joined\n    participants: [],         // List of participants\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment"
+            }
+        ],
+        "x": 380,
+        "y": 600,
+        "wires": [
+            [
+                "f2503283ceb878c7"
+            ]
+        ]
+    },
+    {
+        "id": "77910d971814480b",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/groups/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "2e5d6ea0ff34c392"
+            ]
+        ]
+    },
+    {
+        "id": "251541dda5427485",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /groups/:id",
+        "info": "",
+        "x": 160,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "f2503283ceb878c7",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET group where group_id=$id",
+        "query": "SELECT *\nFROM public.group\nWHERE group_id = $id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 650,
+        "y": 600,
+        "wires": [
+            [
+                "7853acc0ab811e98"
+            ]
+        ]
+    },
+    {
+        "id": "7853acc0ab811e98",
+        "type": "link out",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "b6098d7d3e7a440c"
+        ],
+        "x": 825,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "b98eb88f369166f4",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n    groupID: item.group_id,\n    restaurantID: item.restaurant_id,         // The restaurant that the group is going\n    initUserID: item.init_user_id,           // User ID of the user who initiated the group\n    timestamp: moment(item.group_meeting_timestamp).format(),            // Timestamp of the meeting. String type in ISO 8601 format, e.g. \"2022-09-26T13:25:40+10:00\"\n    maxParticipants: item.group_maximum,      // Number of maximum participants\n    currentParticipants: 0,  // Current number of participants joined\n    participants: [],         // List of participants\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment"
+            }
+        ],
+        "x": 440,
+        "y": 720,
+        "wires": [
+            [
+                "8a8d7536d680e4bd"
+            ]
+        ]
+    },
+    {
+        "id": "923a50727db95fb8",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/restaurant-groups/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 720,
+        "wires": [
+            [
+                "b98eb88f369166f4"
+            ]
+        ]
+    },
+    {
+        "id": "33b1147846459335",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /restaurant-groups/:restaurant-id",
+        "info": "",
+        "x": 220,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "8a8d7536d680e4bd",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET group where restaurant_id=$id",
+        "query": "SELECT group_id, restaurant_id, group_meeting_timestamp, group_maximum, group_init_user_id\nFROM public.group\nWHERE group_meeting_timestamp > NOW() AND restaurant_id = $id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 740,
+        "y": 720,
+        "wires": [
+            [
+                "11babe55f0b42afc"
+            ]
+        ]
+    },
+    {
+        "id": "11babe55f0b42afc",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields",
+        "func": "\nmsg.payload = ({\n    restaurantID: msg.queryParameters.id,\n    upcomingGroups:msg.payload.map(msg.rename_fn)\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 780,
+        "wires": [
+            [
+                "939f040b8ffb58bd"
+            ]
+        ]
+    },
+    {
+        "id": "939f040b8ffb58bd",
+        "type": "http response",
+        "z": "9d44931fbddf8220",
+        "name": "HTTP response (200)",
+        "statusCode": "200",
+        "headers": {},
+        "x": 460,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "62d0ac3beac50bc4",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n    groupID: item.group_id,\n    restaurantID: item.restaurant_id,         // The restaurant that the group is going\n    initUserID: item.init_user_id,           // User ID of the user who initiated the group\n    timestamp: moment(item.group_meeting_timestamp).format(),            // Timestamp of the meeting. String type in ISO 8601 format, e.g. \"2022-09-26T13:25:40+10:00\"\n    maxParticipants: item.group_maximum,      // Number of maximum participants\n    currentParticipants: 0,  // Current number of participants joined\n    participants: [],         // List of participants\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment"
+            }
+        ],
+        "x": 440,
+        "y": 900,
+        "wires": [
+            [
+                "e12cf970196d0458"
+            ]
+        ]
+    },
+    {
+        "id": "3e12c9c50411fcbf",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/user-groups/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 900,
+        "wires": [
+            [
+                "62d0ac3beac50bc4"
+            ]
+        ]
+    },
+    {
+        "id": "4856759e15ac6e7e",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /user-groups/:user-id",
+        "info": "",
+        "x": 190,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "e12cf970196d0458",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET group where user_id=$id",
+        "query": "SELECT user_id, public.group.*\nFROM public.user_group\nINNER JOIN public.group\nON public.user_group.group_id = public.group.group_id\nWHERE group_meeting_timestamp > NOW() AND public.user_group.user_id = $id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 730,
+        "y": 900,
+        "wires": [
+            [
+                "0ca7ce0be116d723"
+            ]
+        ]
+    },
+    {
+        "id": "0ca7ce0be116d723",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields",
+        "func": "\nmsg.payload = ({\n    userID: msg.queryParameters.id,\n    upcomingGroups:msg.payload.map(msg.rename_fn)\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 960,
+        "wires": [
+            [
+                "5747c7c07dfa5315"
+            ]
+        ]
+    },
+    {
+        "id": "5747c7c07dfa5315",
+        "type": "http response",
+        "z": "9d44931fbddf8220",
+        "name": "HTTP response (200)",
+        "statusCode": "200",
+        "headers": {},
+        "x": 460,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "d4782122a7479d8f",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Check id & rename function",
+        "func": "const id = parseInt(msg.req.params.id);\n\nif (isNaN(id)){\n    throw new Error(\"id is not a number\")\n}\n\nmsg.queryParameters = {\n    id: id\n}\n\nmsg.rename_fn = (item) => ({\n  userID: item.user_id,\n  userName: item.username,\n  favouriteRestaurants: [],\n  gender: item.gender,\n  userPhoto: item.user_photo,        // URL to the user's photo\n})\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment"
+            }
+        ],
+        "x": 380,
+        "y": 1080,
+        "wires": [
+            [
+                "5e3454d885273475"
+            ]
+        ]
+    },
+    {
+        "id": "b0c85978b39e3b2d",
+        "type": "http in",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "url": "/users/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1080,
+        "wires": [
+            [
+                "d4782122a7479d8f"
+            ]
+        ]
+    },
+    {
+        "id": "adf38d50698856c2",
+        "type": "comment",
+        "z": "9d44931fbddf8220",
+        "name": "API [GET] /users/:user-id",
+        "info": "",
+        "x": 170,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "5e3454d885273475",
+        "type": "postgresql",
+        "z": "9d44931fbddf8220",
+        "name": "GET user where user_id=$id",
+        "query": "SELECT user_id, username, gender, user_photo\nFROM public.\"user\"\nWHERE user_id = $id;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 680,
+        "y": 1080,
+        "wires": [
+            [
+                "7d61c8d841b27e38"
+            ]
+        ]
+    },
+    {
+        "id": "7d61c8d841b27e38",
+        "type": "link out",
+        "z": "9d44931fbddf8220",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "b6098d7d3e7a440c"
+        ],
+        "x": 915,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "e9442f5073b25ca0",
+        "type": "http response",
+        "z": "614fbde873f759f7",
+        "name": "HTTP response (400)",
+        "statusCode": "400",
+        "headers": {},
+        "x": 640,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "01b529cd88b7521f",
+        "type": "link in",
+        "z": "614fbde873f759f7",
+        "name": "[IN] Generate error message",
+        "links": [
+            "5f47d696995e5c0d",
+            "a0110f2b25cddffb",
+            "f71ee2c1c887986b"
+        ],
+        "x": 175,
+        "y": 180,
+        "wires": [
+            [
+                "7011c1db4c8544a0"
+            ]
+        ]
+    },
+    {
+        "id": "2729d7725e86fe62",
+        "type": "catch",
+        "z": "614fbde873f759f7",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "7011c1db4c8544a0"
+            ]
+        ]
+    },
+    {
+        "id": "7011c1db4c8544a0",
+        "type": "change",
+        "z": "614fbde873f759f7",
+        "name": "Generate error message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "payload.timestamp",
+                "pt": "msg",
+                "to": "$now(\"[Y]-[M01]-[D01]T[H01]:[m]:[s].[f001][Z01:01t]\",\"+1000\")",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload.status",
+                "pt": "msg",
+                "to": "error",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.message",
+                "pt": "msg",
+                "to": "$exists(error.message)?error.message:\"Check your input\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 140,
+        "wires": [
+            [
+                "e9442f5073b25ca0"
+            ]
+        ]
+    },
+    {
+        "id": "86e4487b744af3da",
+        "type": "comment",
+        "z": "614fbde873f759f7",
+        "name": "API Response with Error",
+        "info": "",
+        "x": 190,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "85c6baec64852bd5",
+        "type": "inject",
+        "z": "11a6bc149c21cc99",
+        "name": "Input",
+        "props": [
+            {
+                "p": "name",
+                "v": "Master Lanzhou Noodle Bar - Melbourne Uni",
+                "vt": "str"
+            },
+            {
+                "p": "image",
+                "v": "https://lh5.googleusercontent.com/p/AF1QipOF1pIjlK6GlrS6RLozXUCA2ojSDJA7RbmvtMqM=w408-h291-k-no",
+                "vt": "str"
+            },
+            {
+                "p": "cuisine_type",
+                "v": "Chinese",
+                "vt": "str"
+            },
+            {
+                "p": "address",
+                "v": "Shop F/700 Swanston St, Carlton VIC 3053",
+                "vt": "str"
+            },
+            {
+                "p": "latitude",
+                "v": "-37.80006793035085",
+                "vt": "num"
+            },
+            {
+                "p": "longitude",
+                "v": "144.9651197406779",
+                "vt": "num"
+            },
+            {
+                "p": "opening_hours",
+                "v": "10:30AM-5PM",
+                "vt": "str"
+            },
+            {
+                "p": "queryParameters",
+                "v": "{\t   \"name\": msg.name,\t   \"image\": msg.image,\t   \"cuisine_type\":msg.cuisine_type,\t   \"address\":msg.address,\t   \"latitude\":msg.latitude,\t   \"longitude\":msg.longitude,\t   \"opening_hours\":msg.opening_hours\t}",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 110,
+        "y": 180,
+        "wires": [
+            [
+                "a1c837b25cb71b19"
+            ]
+        ]
+    },
+    {
+        "id": "a1c837b25cb71b19",
+        "type": "postgresql",
+        "z": "11a6bc149c21cc99",
+        "name": "INSERT INTO restaurant",
+        "query": "INSERT INTO public.restaurant(\n\t name, image, cuisine_type, address, latitude, longitude, opening_hours)\n\tVALUES ($name, \n\t\t\t$image,\n\t\t\t$cuisine_type, \n\t\t\t$address, \n\t\t\t$latitude, \n\t\t\t$longitude,\n\t\t\t$opening_hours);",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 370,
+        "y": 180,
+        "wires": [
+            [
+                "1935d058d95bd247"
+            ]
+        ]
+    },
+    {
+        "id": "1935d058d95bd247",
+        "type": "debug",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 610,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "cb4d8a0d8e663c76",
+        "type": "comment",
+        "z": "11a6bc149c21cc99",
+        "name": "Add a restaurant",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "e9bf0dad67698547",
+        "type": "inject",
+        "z": "11a6bc149c21cc99",
+        "name": "Input",
+        "props": [
+            {
+                "p": "username",
+                "v": "jeffrey",
+                "vt": "str"
+            },
+            {
+                "p": "password",
+                "v": "jeffrey1234",
+                "vt": "str"
+            },
+            {
+                "p": "gender",
+                "v": "M",
+                "vt": "str"
+            },
+            {
+                "p": "user_photo",
+                "v": "https://picsum.photos/100/100",
+                "vt": "str"
+            },
+            {
+                "p": "queryParameters",
+                "v": "{\t\"username\": msg.username, \t\"password\": msg.password, \t\"gender\": msg.gender, \t\"user_photo\": msg.user_photo\t}",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "de34d73ddb843e11"
+            ]
+        ]
+    },
+    {
+        "id": "7fc9d64c64aed7b5",
+        "type": "postgresql",
+        "z": "11a6bc149c21cc99",
+        "name": "INSERT INTO user",
+        "query": "INSERT INTO \"user\"(\n\tusername, password, gender, user_photo)\n\tVALUES ($username, $password, $gender, $user_photo);",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 630,
+        "y": 340,
+        "wires": [
+            [
+                "e94e0eb68f82da5e"
+            ]
+        ]
+    },
+    {
+        "id": "e94e0eb68f82da5e",
+        "type": "debug",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "5b475d76411c26e9",
+        "type": "comment",
+        "z": "11a6bc149c21cc99",
+        "name": "Add a user",
+        "info": "",
+        "x": 100,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "de34d73ddb843e11",
+        "type": "bcrypt",
+        "z": "11a6bc149c21cc99",
+        "name": "Hash password (10 rounds)",
+        "action": "encrypt",
+        "field": "queryParameters.password",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 360,
+        "y": 340,
+        "wires": [
+            [
+                "7fc9d64c64aed7b5"
+            ]
+        ]
+    },
+    {
+        "id": "f489a352a4d69193",
+        "type": "inject",
+        "z": "11a6bc149c21cc99",
+        "name": "Input (Correct PW)",
+        "props": [
+            {
+                "p": "username",
+                "v": "jeffrey",
+                "vt": "str"
+            },
+            {
+                "p": "checkpassword",
+                "v": "jeffrey1234",
+                "vt": "str"
+            },
+            {
+                "p": "queryParameters",
+                "v": "{\t    \"username\":msg.username\t}",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "6b9cc65ee8c67bf7"
+            ]
+        ]
+    },
+    {
+        "id": "2fbe75af48490c11",
+        "type": "comment",
+        "z": "11a6bc149c21cc99",
+        "name": "Authenticate user",
+        "info": "",
+        "x": 120,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "6b9cc65ee8c67bf7",
+        "type": "postgresql",
+        "z": "11a6bc149c21cc99",
+        "name": "GET user by username",
+        "query": "SELECT * FROM \"user\"\nWHERE username=$username;",
+        "postgreSQLConfig": "b1fda389a7c4172e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 360,
+        "y": 500,
+        "wires": [
+            [
+                "0939480117897ec3"
+            ]
+        ]
+    },
+    {
+        "id": "7ad6d566ca18f433",
+        "type": "debug",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "match",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1130,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "fc72f6dd27a8929c",
+        "type": "bcrypt",
+        "z": "11a6bc149c21cc99",
+        "name": "Verify hash (10 rounds)",
+        "action": "verify",
+        "field": "checkpassword",
+        "hash": "dbReturn.password",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 960,
+        "y": 460,
+        "wires": [
+            [
+                "7ad6d566ca18f433"
+            ]
+        ]
+    },
+    {
+        "id": "8b68981d1321ab20",
+        "type": "change",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "dbReturn",
+                "pt": "msg",
+                "to": "payload.0",
+                "tot": "msg",
+                "dc": true
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 460,
+        "wires": [
+            [
+                "fc72f6dd27a8929c"
+            ]
+        ]
+    },
+    {
+        "id": "12a66479f6c677f0",
+        "type": "catch",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 100,
+        "y": 680,
+        "wires": [
+            [
+                "a32b78973e299878"
+            ]
+        ]
+    },
+    {
+        "id": "a32b78973e299878",
+        "type": "debug",
+        "z": "11a6bc149c21cc99",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 270,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "0939480117897ec3",
+        "type": "switch",
+        "z": "11a6bc149c21cc99",
+        "name": "Return length",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 560,
+        "y": 500,
+        "wires": [
+            [
+                "8b68981d1321ab20"
+            ],
+            [
+                "e80a21c5e6c1a754"
+            ]
+        ]
+    },
+    {
+        "id": "e80a21c5e6c1a754",
+        "type": "debug",
+        "z": "11a6bc149c21cc99",
+        "name": "Error: no such user",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "{\"error\": \"No such user\"}",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "9b3d153f58394cc0",
+        "type": "inject",
+        "z": "11a6bc149c21cc99",
+        "name": "Input (Wrong PW)",
+        "props": [
+            {
+                "p": "username",
+                "v": "jeffrey",
+                "vt": "str"
+            },
+            {
+                "p": "checkpassword",
+                "v": "1234",
+                "vt": "str"
+            },
+            {
+                "p": "queryParameters",
+                "v": "{\t    \"username\":msg.username\t}",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 140,
+        "y": 540,
+        "wires": [
+            [
+                "6b9cc65ee8c67bf7"
+            ]
+        ]
+    },
+    {
+        "id": "42d3496d34ffd276",
+        "type": "bcrypt",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "action": "verify",
+        "field": "plaintext",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "080bc7ce33e77583"
+            ]
+        ]
+    },
+    {
+        "id": "4247d0ee9a353cf4",
+        "type": "bcrypt",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "action": "encrypt",
+        "field": "payload",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "3d0a85efcf28a80e",
+                "42d3496d34ffd276"
+            ]
+        ]
+    },
+    {
+        "id": "080bc7ce33e77583",
+        "type": "debug",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 650,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "988afc6f6d6092eb",
+        "type": "inject",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "plaintext",
+                "v": "ABCDE",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "ABCDE",
+        "payloadType": "str",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "4247d0ee9a353cf4"
+            ]
+        ]
+    },
+    {
+        "id": "3d0a85efcf28a80e",
+        "type": "debug",
+        "z": "5a455541.3fdcac",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 180,
+        "wires": []
+    }
+]
