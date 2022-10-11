@@ -46,7 +46,7 @@ export async function getAllRestaurant(): Promise<Restaurant[]> {
 /** 
  * Get Restaurant object by restaurantID
  * @param restaurantID
- * @return an array of Restaurant
+ * @return a Restaurant object
  **/
 export async function getRestaurant(restaurantID: string): Promise<Restaurant> {
     try{
