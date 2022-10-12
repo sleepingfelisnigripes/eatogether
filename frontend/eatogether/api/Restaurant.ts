@@ -62,17 +62,18 @@ export async function getRestaurantInfo(
       `${API_URL}/restaurants/${restaurantID}`
     );
     const serverResponse: ServerResponse = await response.json();
-
+    
     if (response.ok) {
       if (serverResponse.data) {
         return serverResponse.data as Restaurant;
       } else {
+        console.log(serverResponse.message);
         return Promise.reject(
           new Error(serverResponse.message ?? "Error while fetching restaurant")
         );
       }
     } else {
-      return Promise.reject(new Error("Error when fetching restaurants"));
+      return Promise.reject(new Error(serverResponse.message ?? "Error when fetching restaurants"));
     }
   } catch (error) {
     // Handle the error

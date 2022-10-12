@@ -41,7 +41,7 @@ export type User = {
                 return Promise.reject(new Error(serverResponse.message ?? "Error while fetching user"));
             }
         } else {
-            return Promise.reject(new Error('Error when fetching user'));
+            return Promise.reject(new Error(serverResponse.message ?? 'Error when fetching user'));
         }
     }
     catch (error){
