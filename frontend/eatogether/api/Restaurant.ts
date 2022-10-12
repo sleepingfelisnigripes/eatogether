@@ -1,6 +1,7 @@
-import { Review } from "./Review";
 import { LatLng } from "./Latlng";
 import { API_URL } from "./Common";
+import { Review } from "./Review";
+import { Group } from "./Group";
 
 export type Restaurant = {
   restaurantID: string;
@@ -13,13 +14,14 @@ export type Restaurant = {
   openingHours: string; // Opening hours of the restaurant, e.g. 10:00am-9:00pm
   rating: number; // Average rating of the restaurant (0-5 stars)
   reviews?: Review[]; // store all reviewIDs of a restaurant
+  upcomingGroups?: Group[];  // upcoming Groups in this restaurant
 };
 
 /** 
  * Get all Restaurant objects
  * @return an array of Restaurant objects
  **/
-export async function getAllRestaurant(): Promise<Restaurant[]> {
+export async function getAllRestaurants(): Promise<Restaurant[]> {
   try {
     const response: Response = await fetch(`${API_URL}/restaurants`);
     const restaurants: Restaurant[] = await response.json();
@@ -48,7 +50,7 @@ export async function getAllRestaurant(): Promise<Restaurant[]> {
  * @param restaurantID
  * @return a Restaurant object
  **/
-export async function getRestaurant(restaurantID: string): Promise<Restaurant> {
+export async function getRestaurantInfo(restaurantID: string): Promise<Restaurant> {
     try{
         const response: Response = await fetch(`${API_URL}/restaurants/${restaurantID}`);
         const restaurant:Restaurant = await response.json();

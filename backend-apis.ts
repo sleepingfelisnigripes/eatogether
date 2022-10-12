@@ -12,13 +12,14 @@ type Restaurant = {
   restaurantID: string;
   restaurantName: string;
   restaurantImage: string;  // URL of the main/facade image of the restaurant
-  noOfGroupsToday: number;  // Number of existing groups for today
+  noOfGroupsToday?: number;  // Number of existing groups for today
   cuisineType: string;      // Type of cuisine served
   address: string;          // address of the restaurant
   latlng: LatLng;           // LatLng coordinate of the restaurant
   openingHours: string;     // Opening hours of the restaurant, e.g. 10:00am-9:00pm
   rating: number;           // Average rating of the restaurant (0-5 stars)
   reviews?: Review[];      // store all reviewIDs of a restaurant
+  upcomingGroups?: Group[];  // upcoming Groups in this restaurant
 }
 
 // API endpoint: GET /reviews/{reviewID}
@@ -26,8 +27,10 @@ type Restaurant = {
 type Review = {
   reviewID: string;
   timestamp: string;        // String type in ISO 8601 format, e.g. "2022-09-26T13:25:40+10:00"
+  restaurantID: string;     // The restaurant ID of the place being reviewed
   reviewerID: string;       // The user ID of the reviewer
   reviewerName: string;     // The name of the reviewer
+  reviewerPhoto: string;    // Url of the reviewer profile photo
   reviewRating: number;     // The rating given by the review user
   reviewText: string;       // Text content of the review
   reviewImages: string[],   // Urls of review reviewImages
@@ -45,20 +48,6 @@ type Group = {
   participants: User[];         // List of participants
 }
 
-// API endpoint: /restaurant-groups/{restaurantID}
-// Return: a list of FUTURE Groups for a restaurant (expired groups will not appear)
-type RestaurantGroup = {
-  restaurantID: string;
-  upcomingGroups: Group[];
-}
-
-// API endpoint: /user-group/{userID}
-// Return: a list of FUTURE Groups that a user has joined (expired groups will not appear)
-type UserGroup = {
-  userID: string,
-  upcomingGroups: Group[];
-}
-
 enum Gender {
   male = "M",
   female = 'F',
@@ -73,6 +62,7 @@ type User = {
   favouriteRestaurants?: Restaurant[];
   gender: Gender;
   userPhoto: string;        // URL to the user's photo
+
 }
 
 // TODO: API endpoint: POST /login/           => Log in and get a JWT token
