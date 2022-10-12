@@ -1,27 +1,35 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface IUserSliceState {
-  userName: string;
-}
-
-type UserPayload = {
-  userName: string
+export interface IUserSliceState {
+  user_id: string;
+  username: string;
+  user_photo: string;
+  ETToken: string;
+  StreamToken: string;
 }
 
 const initialState: IUserSliceState = {
-  userName: '',
+  user_id: "",
+  username: "",
+  user_photo: "",
+  ETToken: "",
+  StreamToken: ""
 }
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUsers: (state, action: PayloadAction<UserPayload>) => {
-      state.userName = action.payload.userName
+    setLoggedInUser: (state, action: PayloadAction<IUserSliceState>) => {
+      state.user_id = action.payload.user_id,
+      state.username = action.payload.username,
+      state.user_photo = action.payload.user_photo,
+      state.ETToken = action.payload.ETToken,
+      state.StreamToken = action.payload.StreamToken
     }
   }
 })
 
-export const { setUsers } = userSlice.actions
+export const { setLoggedInUser } = userSlice.actions
 
 export default userSlice.reducer;

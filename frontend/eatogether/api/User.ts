@@ -1,6 +1,6 @@
 
 
-import { API_URL } from "./Common";
+import { API_URL, ServerResponse } from "./Common";
 import { Group } from "./Group";
 import { Restaurant } from "./Restaurant";
 
@@ -32,16 +32,16 @@ export type User = {
  export async function getUserInfo(userID: string): Promise<User> {
     try{
         const response: Response = await fetch(`${API_URL}/users/${userID}`);
-        const user:User = await response.json();
+        const serverResponse: ServerResponse = await response.json();
   
         if (response.ok){
-            if (user){
-                return user;
+            if (serverResponse.data) {
+                return serverResponse.data as User;
             } else {
-                return Promise.reject(new Error('Cannot fetch any user.'));
+                return Promise.reject(new Error(serverResponse.message ?? "Error while fetching user"));
             }
         } else {
-            return Promise.reject(new Error('Error when fetching user'));
+            return Promise.reject(new Error(serverResponse.message ?? 'Error when fetching user'));
         }
     }
     catch (error){

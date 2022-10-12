@@ -127,3 +127,6 @@ dist
 
 # Certs
 *.pem
+
+# Database backup
+backend/postgresql/backup/*

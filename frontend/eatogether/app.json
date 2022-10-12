@@ -33,6 +33,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The Eatogether accesses your photos to let you share them with your friends.",
+          "cameraPermission": "The Eatogether to access your camera."
+        }
+      ]
+    ]
   }
 }
