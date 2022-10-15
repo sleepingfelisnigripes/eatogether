@@ -3,12 +3,14 @@ a mobile app:)
 
 ## Frontend: Expo React Native App
 ### 1. Install dependencies
-Run `npm install`
+Run ```
+cd ./frontend/eatogether
+npm install
+``` inside 
 
 ### 2. Run expo server
 Run 
 ```
-cd ./frontend/eatogether
 npx expo start 
 ```
 ---
