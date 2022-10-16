@@ -6,25 +6,6 @@ import { Gender, getUserInfo, User } from '../../api/User';
 import Card from '../components/card';
 import ChatScreen from './chat-screen';
 
-const mockParticipants: User[] = [1,2,3].map(p => ({
-  userID: `userID${p}`,
-  userName: `userName${p}`,
-  favouriteRestaurants: [],
-  gender: Gender.male,
-  userPhoto: `userPhoto${p}`,
-  upcomingGroups: [],
-}))
-
-// const mockGroupDatas: Group[] = [1,2,3,4,5].map(a => (
-//   {groupID: `groupID${a}`,
-//     restaurantID: `restaurantID${a}`, // The restaurant that the group is going
-//     initUserID: `initUserID${a}`, // User ID of the user who initiated the group
-//     timestamp: `timestamp${a}`, // Timestamp of the meeting. String type in ISO 8601 format, e.g. "2022-09-26T13:25:40+10:00"
-//     maxParticipants: a, // Number of maximum participants
-//     currentParticipants: a, // Current number of participants joined
-//     participants: mockParticipants, }
-// ))
-
 export default function MyGroupsScreen() {
   const [selectedChat, setSelectedChat] = useState<string | null>(null)
   const [groups, setGroups] = useState<Group[]>([])
