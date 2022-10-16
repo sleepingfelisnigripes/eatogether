@@ -6,7 +6,7 @@ a mobile app:)
 Run 
 ```
 cd ./frontend/eatogether
-npm install
+npm install --legacy-peer-deps
 ``` 
 
 ### 2. Run expo server
