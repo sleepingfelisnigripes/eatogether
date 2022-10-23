@@ -31,7 +31,7 @@ services:
   nodered:
     container_name: nodered
     hostname: nodered
-    image: nodered/node-red:2.2.3-12
+    image: nodered/node-red:3.0.2-16
     restart: unless-stopped
     # Ports not directly exposed, instead thru cloudflare tunnel
     # ports:
