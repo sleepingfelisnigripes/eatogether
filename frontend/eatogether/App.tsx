@@ -7,8 +7,8 @@ import HomeScreen from "./src/screens/HomeScreen";
 import RestaurantsScreen from "./src/screens/RestaurantsScreen";
 import MyGroupsScreen from "./src/screens/MyGroupsScreen";
 import { Ionicons } from "@expo/vector-icons";
-import { Provider } from 'react-redux';
-import store from './src/redux/store';
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -58,11 +58,11 @@ function MyTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Provider store={store}>
+    <Provider store={store}>
+      <NavigationContainer>
         <MyTabs />
-      </Provider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
