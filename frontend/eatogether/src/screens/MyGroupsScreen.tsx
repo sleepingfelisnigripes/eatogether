@@ -15,10 +15,18 @@ import {
 import { Group } from '../../api/Group';
 import { getUserInfo } from '../../api/User';
 import Card from '../components/card';
+import ChatScreen from './chat-screen';
 
-const client = StreamChat.getInstance("vsw2j53wvgv6");
+const client = StreamChat.getInstance("mjsatx3cfzp7");
 
-export function ChatScreen() {
+const createTestChannelMethod = async() => {
+  const channel = client.channel('messaging', 'travel', {
+    members: ['jlahey'],
+} );
+ await channel.create();
+}
+
+export default function MyGroupsScreen() {
   const [channel, setChannel] = useState<ChannelType>();
   const [clientReady, setClientReady] = useState(false);
   const [thread, setThread] = useState<MessageType | null>();
@@ -32,9 +40,14 @@ export function ChatScreen() {
             name: "Jim Lahey",
             image: "https://i.imgur.com/fR9Jz14.png",
           },
-          "user_token"
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.re3KgxXHBiCA6Tl06fnwVta6l3CQevUN24SHU7Kx3js"
         );
         setClientReady(true);
+        createTestChannelMethod()
+        .catch(e => {
+          console.log('error')
+          console.log(e)
+        })
       } catch (e) {
         console.log(e);
       }
@@ -85,51 +98,41 @@ export function ChatScreen() {
       </View>
     </OverlayProvider>
   );
-
-  // return (
-  //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //     <OverlayProvider>
-  //       <Chat client={client}>
-  //         <ChannelList />
-  //       </Chat>
-  //       ;
-  //     </OverlayProvider>
-  //   </View>
-  // );
 }
 
-export default function MyGroupsScreen() {
-  const [selectedChat, setSelectedChat] = useState<string | null>(null)
-  const [groups, setGroups] = useState<Group[]>([])
+// export default function MyGroupsScreen() {
+//   const [selectedChat, setSelectedChat] = useState<string | null>(null)
+//   const [groups, setGroups] = useState<Group[]>([])
 
-  useEffect(() => {
-    getUserInfo('2')
-      .then(user => setGroups(user?.upcomingGroups?? []))
-      .catch(e => {
-        console.log('Errors when fetching users joined group')
-        console.log(e)
-      })
-  }, [])
+//   useEffect(() => {
+//     getUserInfo('2')
+//       .then(user => setGroups(user?.upcomingGroups?? []))
+//       .catch(e => {
+//         console.log('Errors when fetching users joined group')
+//         console.log(e)
+//       })
+//   }, [])
 
-  return (
-    // <SafeAreaView style={styles.container}>
-    //   {selectedChat?
-    //     // <ChatScreen chatId={selectedChat} handleReturn={() => setSelectedChat(null)}/>
-    //     <ChatScreen/>
-    //     :
-    //     (groups.map(group => ({
-    //         groupID: group.groupID,
-    //         cardTitle: group.restaurantName,
-    //         cardAvatar: group.restaurantImage,
-    //         cardDes: group.timestamp
-    //       })).map(cardData => (
-    //         <Card {...cardData} handleSelectChat={() => {setSelectedChat(cardData.groupID)}}/>
-    //       )))}
-    // </SafeAreaView>)
-    <SafeAreaView style={styles.container}>
-      <ChatScreen/>
-    </SafeAreaView>)
-  }
+//   return (
+//     // <SafeAreaView style={styles.container}>
+//     //   {selectedChat?
+//     //     // <ChatScreen chatId={selectedChat} handleReturn={() => setSelectedChat(null)}/>
+//     //     <ChatScreen/>
+//     //     :
+//     //     (groups.map(group => ({
+//     //         groupID: group.groupID,
+//     //         cardTitle: group.restaurantName,
+//     //         cardAvatar: group.restaurantImage,
+//     //         cardDes: group.timestamp
+//     //       })).map(cardData => (
+//     //         <Card {...cardData} handleSelectChat={() => {setSelectedChat(cardData.groupID)}}/>
+//     //       )))}
+//     // </SafeAreaView>)
+//     <SafeAreaView style={styles.container}>
+//       <ChatScreen/>
+//     </SafeAreaView>)
+//   }
+
 
 const styles = StyleSheet.create({
   container: {
