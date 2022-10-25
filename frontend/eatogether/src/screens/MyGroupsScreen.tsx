@@ -17,7 +17,7 @@ import { getUserInfo } from '../../api/User';
 import Card from '../components/card';
 import ChatScreen from './chat-screen';
 
-const client = StreamChat.getInstance("mjsatx3cfzp7");
+const client = StreamChat.getInstance("vsw2j53wvgv6");
 
 const createTestChannelMethod = async() => {
   const channel = client.channel('messaging', 'travel', {
