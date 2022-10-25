@@ -3,8 +3,6 @@ import TouchableScale from 'react-native-touchable-scale'; // https://github.com
 import {LinearGradient} from 'expo-linear-gradient'; // Only if no expo
 import { StyleSheet } from "react-native";
 import React from 'react';
-import WechatOutlined from '@ant-design/icons/lib/icons/WechatOutlined';
-
 interface ICard {
   cardTitle: string,
   cardDes: string,
