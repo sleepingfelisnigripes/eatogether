@@ -45,6 +45,8 @@ type Group = {
   timestamp: string;            // Timestamp of the meeting. String type in ISO 8601 format, e.g. "2022-09-26T13:25:40+10:00"
   maxParticipants: number;      // Number of maximum participants
   currentParticipants: number;  // Current number of participants joined
+  restaurantName: string;
+  restaurantImage: string;
   participants: User[];         // List of participants
 }
 

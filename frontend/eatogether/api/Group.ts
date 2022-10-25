@@ -10,4 +10,6 @@ export type Group = {
   maxParticipants: number; // Number of maximum participants
   currentParticipants: number; // Current number of participants joined
   participants: User[]; // List of participants
+  restaurantName: string;
+  restaurantImage: string;
 };
