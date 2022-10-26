@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { ServerResponse } from "../../api/Common";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../components/Loader";
 import { RootNavParamList } from "../../App";
@@ -145,12 +144,12 @@ const LoginScreen = ({ navigation }: Props) => {
           <KeyboardAvoidingView enabled>
             <View style={{ alignItems: "center" }}>
               <Image
-                source={require("../../assets/adaptive-icon.png")}
+                source={require("../../assets/Eatogether-logos_white.png")}
                 style={{
-                  width: "50%",
-                  height: 100,
+                  width: "70%",
+                  height: 300,
                   resizeMode: "contain",
-                  margin: 30,
+                  // margin: 30,
                 }}
               />
             </View>

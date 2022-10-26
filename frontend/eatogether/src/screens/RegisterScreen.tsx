@@ -162,7 +162,7 @@ const RegisterScreen = ({ navigation }: Props) => {
     <View style={{ flex: 1, backgroundColor: "#307ecc" }}>
       <Loader loading={loading} />
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="never"
         contentContainerStyle={{
           justifyContent: "center",
           alignContent: "center",
