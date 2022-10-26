@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ScrollView,
+  Keyboard,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Dropdown } from "react-native-element-dropdown";
@@ -17,6 +18,7 @@ import {
   SaveFormat,
   ImageResult,
 } from "expo-image-manipulator";
+import mime from "mime";
 
 import Loader from "../components/Loader";
 import { RootNavParamList } from "../../App";
@@ -50,7 +52,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       quality: 1,
     });
 
-    console.log("Photo", result);
+    // console.log("Photo", result);
 
     if (!result.cancelled) {
       const manipResult = await manipulateAsync(
@@ -70,12 +72,12 @@ const RegisterScreen = ({ navigation }: Props) => {
     data.append("gender", genderValue);
     if (photo != null) {
       data.append("user_photo", {
-        name: "user_photo.jpg",
-        type: "image",
+        name: photo.uri.split("/").pop(),
+        type: mime.getType(photo.uri),
         uri: photo.uri,
       });
     }
-    console.log(data);
+    // console.log(data);
     return data;
   };
 
@@ -124,6 +126,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       .catch((error) => {
         //Hide Loader
         setLoading(false);
+        setErrorText(error.message);
         console.error(error);
       });
   };
@@ -203,9 +206,7 @@ const RegisterScreen = ({ navigation }: Props) => {
               ref={passwordInputRef}
               returnKeyType="next"
               secureTextEntry={true}
-              onSubmitEditing={() => {
-                // ageInputRef.current && ageInputRef.current.focus()
-              }}
+              onSubmitEditing={Keyboard.dismiss}
               blurOnSubmit={false}
             />
           </View>
@@ -213,13 +214,13 @@ const RegisterScreen = ({ navigation }: Props) => {
           <Dropdown
             style={styles.Dropdown}
             placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
             data={genderItems}
             search={false}
             maxHeight={300}
             labelField="label"
             valueField="value"
             placeholder="Gender"
-            // searchPlaceholder="Search..."
             value={genderValue}
             onChange={(item) => {
               setGenderValue(item.value);
@@ -275,18 +276,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     padding: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
   },
   placeholderStyle: {
-    fontSize: 14,
-    color: "#acacac",
+    fontSize: 15,
+    color: "#8b9cb5",
+  },
+  selectedTextStyle: {
+    fontSize: 15,
+    color: "white",
   },
   SectionStyle: {
     flexDirection: "row",
