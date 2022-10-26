@@ -6,26 +6,22 @@ import {
   Text,
   Image,
   KeyboardAvoidingView,
-  Keyboard,
   TouchableOpacity,
   ScrollView,
-  Button,
-  Platform,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Dropdown } from "react-native-element-dropdown";
 import * as ImagePicker from "expo-image-picker";
+import {
+  manipulateAsync,
+  SaveFormat,
+  ImageResult,
+} from "expo-image-manipulator";
 
 import Loader from "../components/Loader";
 import { RootNavParamList } from "../../App";
-import { Gender } from "../../api/User";
 
 type Props = StackScreenProps<RootNavParamList, "RegisterScreen">;
-interface Photo {
-  filename: string;
-  type: string;
-  uri: string;
-}
 
 const RegisterScreen = ({ navigation }: Props) => {
   const [username, setUsername] = useState("");
@@ -33,7 +29,7 @@ const RegisterScreen = ({ navigation }: Props) => {
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
-  const [photo, setPhoto] = useState<ImagePicker.ImageInfo | null>(null);
+  const [photo, setPhoto] = useState<ImageResult | null>(null);
   const [genderValue, setGenderValue] = useState("");
   const genderItems = [
     { label: "Male", value: "M" },
@@ -51,13 +47,18 @@ const RegisterScreen = ({ navigation }: Props) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.2,
+      quality: 1,
     });
 
     console.log("Photo", result);
 
     if (!result.cancelled) {
-      setPhoto(result);
+      const manipResult = await manipulateAsync(
+        result.uri,
+        [{ resize: { width: 150 } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+      setPhoto(manipResult);
     }
   };
 
@@ -70,7 +71,7 @@ const RegisterScreen = ({ navigation }: Props) => {
     if (photo != null) {
       data.append("user_photo", {
         name: "user_photo.jpg",
-        type: photo.type ?? "image",
+        type: "image",
         uri: photo.uri,
       });
     }
@@ -111,7 +112,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       .then((responseJson) => {
         //Hide Loader
         setLoading(false);
-        console.log(responseJson);
+        // console.log(responseJson);
         // If server response message same as Data Matched
         if (responseJson.success === true) {
           setIsRegistraionSuccess(true);
@@ -233,7 +234,7 @@ const RegisterScreen = ({ navigation }: Props) => {
               <>
                 <Image
                   source={{ uri: photo.uri }}
-                  style={{ width: 300, height: 300 }}
+                  style={{ width: 150, height: 150, alignSelf: "center" }}
                 />
               </>
             )}
@@ -301,7 +302,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 35,
     marginRight: 35,
-    marginBottom: 40,
+    marginBottom: 20,
   },
   buttonStyle: {
     backgroundColor: "#7ECC30",
@@ -324,10 +325,11 @@ const styles = StyleSheet.create({
     height: 40,
     width: 150,
     alignItems: "center",
+    alignSelf: "center",
     borderRadius: 30,
     // marginLeft: 35,
     // marginRight: 35,
-    // marginTop: 20,
+    marginTop: 20,
     // marginBottom: 20,
   },
   buttonTextStyle: {
