@@ -7,16 +7,14 @@ import HomeScreen from "./src/screens/HomeScreen";
 import RestaurantsScreen from "./src/screens/RestaurantsScreen";
 import MyGroupsScreen from "./src/screens/MyGroupsScreen";
 import { Ionicons } from "@expo/vector-icons";
-import { Provider } from 'react-redux';
-import store from './src/redux/store';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import { OverlayProvider } from 'stream-chat-react-native';
-import 'react-native-gesture-handler';
-import { AppRegistry } from 'react-native';
-import { useEffect } from 'react';
-import { expo } from './app.json';
-import { registerRootComponent } from 'expo';
-
+import "react-native-gesture-handler";
+import { AppRegistry } from "react-native";
+import { expo } from "./app.json";
+import { registerRootComponent } from "expo";
 
 AppRegistry.registerComponent(expo.name, () => App);
 
@@ -67,14 +65,11 @@ function MyTabs() {
 }
 
 export default function App() {
-
   return (
     <NavigationContainer>
       <Provider store={store}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          {/* <OverlayProvider> */}
-            <MyTabs />
-          {/* </OverlayProvider> */}
+          <MyTabs />
         </GestureHandlerRootView>
       </Provider>
     </NavigationContainer>

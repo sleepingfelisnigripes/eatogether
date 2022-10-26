@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StreamChat, Channel as ChannelType } from "stream-chat";
 import {
   Channel,
@@ -12,19 +12,19 @@ import {
   OverlayProvider,
   Thread,
 } from "stream-chat-expo";
-import { Group } from '../../api/Group';
-import { getUserInfo } from '../../api/User';
-import Card from '../components/card';
-import ChatScreen from './chat-screen';
+import { Group } from "../../api/Group";
+import { getUserInfo } from "../../api/User";
+import Card from "../components/card";
+import ChatScreen from "./chat-screen";
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
 
-const createTestChannelMethod = async() => {
-  const channel = client.channel('messaging', 'travel', {
-    members: ['jlahey'],
-} );
- await channel.create();
-}
+const createTestChannelMethod = async () => {
+  const channel = client.channel("messaging", "travel", {
+    members: ["jlahey"],
+  });
+  await channel.create();
+};
 
 export default function MyGroupsScreen() {
   const [channel, setChannel] = useState<ChannelType>();
@@ -40,14 +40,13 @@ export default function MyGroupsScreen() {
             name: "Jim Lahey",
             image: "https://i.imgur.com/fR9Jz14.png",
           },
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.re3KgxXHBiCA6Tl06fnwVta6l3CQevUN24SHU7Kx3js"
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.h0GRGn_d6lh5Pq0oGZq2ng12n7GmaGXSnG_sqaQE5k8"
         );
         setClientReady(true);
-        createTestChannelMethod()
-        .catch(e => {
-          console.log('error')
-          console.log(e)
-        })
+        createTestChannelMethod().catch((e) => {
+          console.log("error");
+          console.log(e);
+        });
       } catch (e) {
         console.log(e);
       }
@@ -133,7 +132,6 @@ export default function MyGroupsScreen() {
 //     </SafeAreaView>)
 //   }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: "#f9c2ff",
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
