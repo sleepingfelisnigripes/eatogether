@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileScreen from "./src/screens/ProfileScreen";
@@ -20,6 +20,8 @@ import { registerRootComponent } from "expo";
 AppRegistry.registerComponent(expo.name, () => App);
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
+
+LogBox.ignoreLogs(["Audio Video library"]); // Ignore log notification by message
 
 export type RootNavParamList = {
   Home: {};
