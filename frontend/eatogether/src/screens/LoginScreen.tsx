@@ -226,10 +226,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: "#7DE24E",
+    backgroundColor: "#7ECC30",
     borderWidth: 0,
     color: "#FFFFFF",
-    borderColor: "#7DE24E",
+    borderColor: "#7ECC30",
     height: 40,
     alignItems: "center",
     borderRadius: 30,
