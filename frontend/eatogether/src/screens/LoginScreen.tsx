@@ -9,6 +9,7 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { ServerResponse } from "../../api/Common";
@@ -18,6 +19,7 @@ import { RootNavParamList } from "../../App";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoggedInUser, IUserSliceState } from "../redux/userSlice";
 // import { RootState as ReduxRootState } from "../redux/store";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 type Props = StackScreenProps<RootNavParamList, "Login">;
 
@@ -28,7 +30,7 @@ const LoginScreen = ({ navigation }: Props) => {
   const [errortext, setErrortext] = useState("");
 
   const passwordInputRef = createRef<TextInput>();
-
+  const height = useHeaderHeight();
   const dispatch = useDispatch();
 
   const getLoggedInUser = async () => {
@@ -36,13 +38,15 @@ const LoginScreen = ({ navigation }: Props) => {
       const user_id = await AsyncStorage.getItem("user_id");
       const username = await AsyncStorage.getItem("username");
       const user_photo = await AsyncStorage.getItem("user_photo");
-      const token = await AsyncStorage.getItem("token");
-      if (user_id && username && token && user_id != "") {
+      const ETToken = await AsyncStorage.getItem("ETToken");
+      const StreamToken = await AsyncStorage.getItem("StreamToken");
+      if (user_id && username && ETToken && StreamToken && user_id != "") {
         const userData: IUserSliceState = {
           user_id: user_id,
           username: username,
           user_photo: user_photo ?? "",
-          token: token,
+          ETToken: ETToken,
+          StreamToken: StreamToken,
         };
         dispatch(setLoggedInUser(userData));
         console.log("Logged in by AsyncStorage:", userData);
@@ -71,7 +75,7 @@ const LoginScreen = ({ navigation }: Props) => {
     setLoading(true);
     let dataToSend = { username: username, password: userPassword };
     let formBody = JSON.stringify(dataToSend);
-    console.log(formBody);
+    // console.log(formBody);
     try {
       const response = await fetch("https://api.eatogether.site/login", {
         method: "POST",
@@ -82,31 +86,32 @@ const LoginScreen = ({ navigation }: Props) => {
         },
       });
       const responseJson: ServerResponse = await response.json();
-      console.log(responseJson);
+      // console.log(responseJson);
 
       //Hide Loader
       setLoading(false);
-      console.log(responseJson);
+      // console.log(responseJson);
 
       // If server responds log in successful
       if (responseJson.status === "success") {
         AsyncStorage.setItem("user_id", responseJson.data.user_id);
         AsyncStorage.setItem("username", responseJson.data.username);
         AsyncStorage.setItem("user_photo", responseJson.data.username);
-        AsyncStorage.setItem("token", responseJson.data.token);
+        AsyncStorage.setItem("ETToken", responseJson.data.ETToken);
+        AsyncStorage.setItem("StreamToken", responseJson.data.StreamToken);
         const userData: IUserSliceState = {
           user_id: responseJson.data.user_id,
           username: responseJson.data.username,
           user_photo: responseJson.data.user_photo,
-          token: responseJson.data.token,
+          ETToken: responseJson.data.ETToken,
+          StreamToken: responseJson.data.StreamToken,
         };
         dispatch(setLoggedInUser(userData));
         // console.log(useSelector((state: ReduxRootState) => state.user));
-        console.log(userData);
+        // console.log(userData);
 
         // Clear password input box
         setUserPassword("");
-        console.log(passwordInputRef.current && passwordInputRef.current.state);
         navigation.navigate("TabNavigationRoutes");
       } else {
         setErrortext(
@@ -141,7 +146,11 @@ const LoginScreen = ({ navigation }: Props) => {
         }}
       >
         <View>
-          <KeyboardAvoidingView enabled>
+          <KeyboardAvoidingView
+            enabled
+            behavior={Platform.select({ android: undefined, ios: "position" })}
+            keyboardVerticalOffset={height + 70}
+          >
             <View style={{ alignItems: "center" }}>
               <Image
                 source={require("../../assets/Eatogether-logos_white.png")}

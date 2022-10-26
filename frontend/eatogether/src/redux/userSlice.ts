@@ -4,14 +4,16 @@ export interface IUserSliceState {
   user_id: string;
   username: string;
   user_photo: string;
-  token: string;
+  ETToken: string;
+  StreamToken: string;
 }
 
 const initialState: IUserSliceState = {
   user_id: "",
   username: "",
   user_photo: "",
-  token: ""
+  ETToken: "",
+  StreamToken: ""
 }
 
 export const userSlice = createSlice({
@@ -22,7 +24,8 @@ export const userSlice = createSlice({
       state.user_id = action.payload.user_id,
       state.username = action.payload.username,
       state.user_photo = action.payload.user_photo,
-      state.token = action.payload.token 
+      state.ETToken = action.payload.ETToken,
+      state.StreamToken = action.payload.StreamToken
     }
   }
 })
