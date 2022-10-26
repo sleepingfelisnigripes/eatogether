@@ -9,9 +9,10 @@ import MyGroupsScreen from "./src/screens/MyGroupsScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
+import { createStackNavigator } from "@react-navigation/stack";
+import RegisterScreen from "./src/screens/RegisterScreen";
+import Login from "./src/screens/LoginScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-// import { OverlayProvider } from 'stream-chat-react-native';
-import "react-native-gesture-handler";
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
 import { registerRootComponent } from "expo";
@@ -20,14 +21,18 @@ AppRegistry.registerComponent(expo.name, () => App);
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
-export type RootTabParamList = {
+export type RootNavParamList = {
   Home: {};
   Restaurants: {};
   "My Groups": {};
   Profile: {};
+  Login: undefined;
+  RegisterScreen: undefined;
+  Auth: undefined;
+  TabNavigationRoutes: undefined;
 };
 
-const Tab = createBottomTabNavigator<RootTabParamList>();
+const Tab = createBottomTabNavigator<RootNavParamList>();
 
 function MyTabs() {
   return (
@@ -64,15 +69,57 @@ function MyTabs() {
   );
 }
 
+const Stack = createStackNavigator<RootNavParamList>();
+
+const Auth = () => {
+  // Stack Navigator for Login and Sign up Screen
+  return (
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{
+          title: "Register", //Set Header Title
+          headerStyle: {
+            backgroundColor: "#307ecc", //Set Header color
+          },
+          headerTintColor: "#fff", //Set Header text color
+          headerTitleStyle: {
+            fontWeight: "bold", //Set Header text style
+          },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Provider store={store}>
+    <Provider store={store}>
+      <NavigationContainer>
+        {/* Auth: Include Login and Signup */}
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <MyTabs />
+          <Stack.Navigator initialRouteName="Auth">
+            <Stack.Screen
+              name="Auth"
+              component={Auth}
+              options={{ headerShown: false }}
+            />
+            {/* Navigation Tab: Include main app content */}
+            <Stack.Screen
+              name="TabNavigationRoutes"
+              component={MyTabs}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
         </GestureHandlerRootView>
-      </Provider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
