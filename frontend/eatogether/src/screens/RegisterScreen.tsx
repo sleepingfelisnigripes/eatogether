@@ -40,7 +40,7 @@ const RegisterScreen = ({ navigation }: Props) => {
     { label: "Prefer not to say", value: "ND" },
   ];
 
-  const usernameInputRef = createRef<TextInput>();
+  // const usernameInputRef = createRef<TextInput>();
   const passwordInputRef = createRef<TextInput>();
 
   const handleChoosePhoto = async () => {
@@ -72,8 +72,9 @@ const RegisterScreen = ({ navigation }: Props) => {
     data.append("gender", genderValue);
     if (photo != null) {
       data.append("user_photo", {
+        // @ts-ignore
         name: photo.uri.split("/").pop(),
-        type: mime.getType(photo.uri),
+        type: mime.getType(photo.uri)!,
         uri: photo.uri,
       });
     }
