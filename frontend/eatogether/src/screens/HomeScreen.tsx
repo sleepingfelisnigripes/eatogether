@@ -40,6 +40,17 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   else if (currentHour < 18) greetings = "☕️ Good afternoon";
   else greetings = "🌝 Good evening";
 
+  // Get user's permission for location service once the screen is launched
+  useEffect(() => {
+    (async () => {
+      await checkLocationPermission();
+      if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+        return;
+      }
+      await updateUserPosition();
+    })();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
@@ -50,48 +61,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
-
-  // Get user's permission for location service once the screen is launched
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      setLocationPermissionStatus(status);
-      if (status !== Location.PermissionStatus.GRANTED) {
-        return;
-      }
-      await updateUserPosition();
-    })();
-  }, []);
-
-  // Handle whether the user wants the map moves as the user moves
-  useEffect(() => {
-    (async () => {
-      try {
-        await checkLocationPermission();
-        if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
-          throw new Error("Location Permission not granted");
-        }
-      } catch (error) {
-        return;
-      }
-      if (followMe) {
-        updateUserPosition();
-        trackingTimer.current = setInterval(async () => {
-          await updateUserPosition();
-        }, 3000);
-      } else {
-        if (trackingTimer.current) {
-          clearInterval(trackingTimer.current);
-        }
-      }
-
-      return () => {
-        if (trackingTimer.current) {
-          clearInterval(trackingTimer.current);
-        }
-      };
-    })();
-  }, [followMe]);
 
   async function checkLocationPermission(): Promise<void> {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -125,6 +94,36 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
       return;
     }
   }
+
+  // Handle whether the user wants the map moves as the user moves
+  useEffect(() => {
+    (async () => {
+      try {
+        await checkLocationPermission();
+        if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+          throw new Error("Location Permission not granted");
+        }
+      } catch (error) {
+        return;
+      }
+      if (followMe) {
+        updateUserPosition();
+        trackingTimer.current = setInterval(async () => {
+          await updateUserPosition();
+        }, 3000);
+      } else {
+        if (trackingTimer.current) {
+          clearInterval(trackingTimer.current);
+        }
+      }
+
+      return () => {
+        if (trackingTimer.current) {
+          clearInterval(trackingTimer.current);
+        }
+      };
+    })();
+  }, [followMe]);
 
   async function handleLogout(): Promise<void> {
     // const dispatch = useDispatch();
@@ -217,7 +216,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     </>
   );
 }
-console.log("Rendered Home Screen");
 
 const styles = StyleSheet.create({
   bannerContainer: {
