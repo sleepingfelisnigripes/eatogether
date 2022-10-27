@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Linking, StyleSheet, Text, View } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { Button } from "@rneui/themed";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -12,6 +12,7 @@ import { IUserSliceState, setLoggedInUser } from "../redux/userSlice";
 import { RootState as ReduxRootState } from "../redux/store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllRestaurants, Restaurant } from "../../api/Restaurant";
 
 type Props = BottomTabScreenProps<RootNavParamList, "Home">;
 
@@ -32,13 +33,18 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   const trackingTimer = useRef<NodeJS.Timer | null>(null);
   const [locationPermissionStatus, setLocationPermissionStatus] =
     useState<Location.PermissionStatus>(Location.PermissionStatus.DENIED);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   // Update greetings according to time of day
   let greetings: string = "Good day";
   const currentHour = parseInt(moment().format("H"));
-  if (currentHour < 12) greetings = "🌞 Good morning";
-  else if (currentHour < 18) greetings = "☕️ Good afternoon";
-  else greetings = "🌝 Good evening";
+  if (currentHour < 12) {
+    greetings = "🌞 Good morning";
+  } else if (currentHour < 18) {
+    greetings = "☕️ Good afternoon";
+  } else {
+    greetings = "🌝 Good evening";
+  }
 
   // Get user's permission for location service once the screen is launched
   useEffect(() => {
@@ -48,6 +54,13 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
         return;
       }
       await updateUserPosition();
+
+      try {
+        const restaurants = await getAllRestaurants();
+        setRestaurants(restaurants);
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, []);
 
@@ -175,7 +188,16 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
         showsMyLocationButton={false}
         showsPointsOfInterest={false}
         pitchEnabled={false}
-      />
+      >
+        {restaurants.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={marker.latlng}
+            title={marker.restaurantName}
+            description={marker.cuisineType}
+          />
+        ))}
+      </MapView>
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
         <>
           <Button
