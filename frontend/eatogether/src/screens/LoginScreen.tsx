@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }: Props) => {
   const [userPassword, setUserPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
-
+``
   const passwordInputRef = createRef<TextInput>();
   const height = useHeaderHeight();
   const dispatch = useDispatch();

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from 'react-redux';
 import { StreamChat, Channel as ChannelType } from "stream-chat";
 import {
   Channel,
@@ -16,6 +17,7 @@ import { Group } from "../../api/Group";
 import { getUserInfo } from "../../api/User";
 import Card from "../components/card";
 import ChatScreen from "./chat-screen";
+import { RootState } from '../redux/store'
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
 
@@ -30,17 +32,20 @@ export default function MyGroupsScreen() {
   const [channel, setChannel] = useState<ChannelType>();
   const [clientReady, setClientReady] = useState(false);
   const [thread, setThread] = useState<MessageType | null>();
+  const {user_id, username, StreamToken, user_photo} = useSelector((state: RootState) => (
+    state.user
+  ))
 
   useEffect(() => {
     const setupClient = async () => {
       try {
         await client.connectUser(
           {
-            id: "jlahey",
-            name: "Jim Lahey",
-            image: "https://i.imgur.com/fR9Jz14.png",
+            id: user_id,
+            name: username,
+            image: user_photo,
           },
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.h0GRGn_d6lh5Pq0oGZq2ng12n7GmaGXSnG_sqaQE5k8"
+          StreamToken
         );
         setClientReady(true);
         createTestChannelMethod().catch((e) => {
