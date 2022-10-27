@@ -36,9 +36,9 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   // Update greetings according to time of day
   let greetings: string = "Good day";
   const currentHour = parseInt(moment().format("H"));
-  if (currentHour < 12) greetings = "Good morning";
-  else if (currentHour < 18) greetings = "Good afternoon";
-  else greetings = "Good evening";
+  if (currentHour < 12) greetings = "🌞 Good morning";
+  else if (currentHour < 18) greetings = "☕️ Good afternoon";
+  else greetings = "🌝 Good evening";
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {

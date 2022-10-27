@@ -96,7 +96,7 @@ const LoginScreen = ({ navigation }: Props) => {
       if (responseJson.status === "success") {
         AsyncStorage.setItem("user_id", responseJson.data.user_id);
         AsyncStorage.setItem("username", responseJson.data.username);
-        AsyncStorage.setItem("user_photo", responseJson.data.username);
+        AsyncStorage.setItem("user_photo", responseJson.data.user_photo);
         AsyncStorage.setItem("ETToken", responseJson.data.ETToken);
         AsyncStorage.setItem("StreamToken", responseJson.data.StreamToken);
         const userData: IUserSliceState = {
