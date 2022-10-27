@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { StreamChat, Channel as ChannelType } from "stream-chat";
 import {
   Channel,
@@ -17,13 +17,13 @@ import { Group } from "../../api/Group";
 import { getUserInfo } from "../../api/User";
 import Card from "../components/card";
 import ChatScreen from "./chat-screen";
-import { RootState } from '../redux/store'
+import { RootState } from "../redux/store";
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
 
 const createTestChannelMethod = async () => {
   const channel = client.channel("messaging", "travel", {
-    members: ["jlahey"],
+    members: ["jlahey", "57"],
   });
   await channel.create();
 };
@@ -32,9 +32,9 @@ export default function MyGroupsScreen() {
   const [channel, setChannel] = useState<ChannelType>();
   const [clientReady, setClientReady] = useState(false);
   const [thread, setThread] = useState<MessageType | null>();
-  const {user_id, username, StreamToken, user_photo} = useSelector((state: RootState) => (
-    state.user
-  ))
+  const { user_id, username, StreamToken, user_photo } = useSelector(
+    (state: RootState) => state.user
+  );
 
   useEffect(() => {
     const setupClient = async () => {
@@ -48,10 +48,21 @@ export default function MyGroupsScreen() {
           StreamToken
         );
         setClientReady(true);
-        createTestChannelMethod().catch((e) => {
-          console.log("error");
-          console.log(e);
+
+        const channel = client.channel("messaging", {
+          members: ["jlahey", "57"],
+          name: "Awesome channel about traveling",
         });
+
+        setChannel(channel);
+
+        // // fetch the channel state, subscribe to future updates
+        // const state = await channel.watch();
+
+        // createTestChannelMethod().catch((e) => {
+        //   console.log("error");
+        //   console.log(e);
+        // });
       } catch (e) {
         console.log(e);
       }
