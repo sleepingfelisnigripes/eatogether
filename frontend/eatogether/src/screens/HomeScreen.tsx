@@ -48,27 +48,34 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
 
   // Get user's permission for location service once the screen is launched
   useEffect(() => {
-    (async () => {
-      await checkLocationPermission();
-      if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
-        return;
-      }
-      await updateUserPosition();
-
-      try {
-        const restaurants = await getAllRestaurants();
-        setRestaurants(restaurants);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+    // (async () => {
+    //   await checkLocationPermission();
+    //   if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+    //     return;
+    //   }
+    //   await updateUserPosition();
+    //   try {
+    //     const restaurants = await getAllRestaurants();
+    //     setRestaurants(restaurants);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // })();
   }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
       console.log("Home screen is focused");
-      // Call any action
+      // Update restaurant list
+      (async () => {
+        try {
+          const restaurants = await getAllRestaurants();
+          setRestaurants(restaurants);
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
