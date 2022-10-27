@@ -1,4 +1,4 @@
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -57,9 +57,13 @@ const LoginScreen = ({ navigation }: Props) => {
     }
   };
 
-  (async () => {
-    await getLoggedInUser();
-  })();
+  useEffect(() => {
+    (async () => {
+      await getLoggedInUser();
+    })();
+
+    return;
+  }, []);
 
   const handleSubmitPress = async () => {
     setErrortext("");
