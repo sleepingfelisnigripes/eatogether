@@ -47,6 +47,14 @@ export default function MyGroupsScreen() {
           },
           StreamToken
         );
+        // await client.connectUser(
+        //   {
+        //     id: "jlahey",
+        //     name: "Jim Lahey",
+        //     image: "https://i.imgur.com/fR9Jz14.png",
+        //   },
+        //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.h0GRGn_d6lh5Pq0oGZq2ng12n7GmaGXSnG_sqaQE5k8"
+        // );
         setClientReady(true);
 
         const channel = client.channel("messaging", {
@@ -84,8 +92,8 @@ export default function MyGroupsScreen() {
   return (
     <OverlayProvider topInset={60}>
       <TouchableOpacity onPress={onBackPress} disabled={!channel}>
-        <View style={{ height: 60, paddingLeft: 16, paddingTop: 40 }}>
-          {channel && <Text>Back</Text>}
+        <View style={{ height: 80, paddingLeft: 16, paddingTop: 40 }}>
+          {channel && <Text style={{marginTop: 10, fontSize: 25}}>Back</Text>}
         </View>
       </TouchableOpacity>
       <View style={{ flex: 1 }}>
