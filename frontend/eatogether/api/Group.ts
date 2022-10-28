@@ -34,7 +34,7 @@ export async function createGroup(
       group_maximum: maxParticipants,
     };
 
-    const response = await fetch(`${API_URL}/group`, {
+    const response = await fetch(`${API_URL}/group/create`, {
       method: "POST",
       body: JSON.stringify(dataToSend),
       headers: {
