@@ -22,6 +22,8 @@ import mime from "mime";
 
 import Loader from "../components/Loader";
 import { RootNavParamList } from "../../App";
+import { ServerResponse } from "../../api/Common";
+import { registerUser } from "../../api/User";
 
 type Props = StackScreenProps<RootNavParamList, "RegisterScreen">;
 
@@ -64,25 +66,7 @@ const RegisterScreen = ({ navigation }: Props) => {
     }
   };
 
-  const createFormData = () => {
-    const data = new FormData();
-
-    data.append("username", username);
-    data.append("password", userPassword);
-    data.append("gender", genderValue);
-    if (photo != null) {
-      data.append("user_photo", {
-        // @ts-ignore
-        name: photo.uri.split("/").pop(),
-        type: mime.getType(photo.uri)!,
-        uri: photo.uri,
-      });
-    }
-    // console.log(data);
-    return data;
-  };
-
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     setErrorText("");
     if (!username) {
       setErrorText("Please fill in Username");
@@ -101,35 +85,30 @@ const RegisterScreen = ({ navigation }: Props) => {
     //Show Loader
     setLoading(true);
 
-    const formBody = createFormData();
-
-    fetch("https://api.eatogether.site/register", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        //Header Defination
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
+    try {
+      const response: ServerResponse = await registerUser(
+        username,
+        userPassword,
+        genderValue,
+        photo
+      );
+      if (response.status === "success") {
         //Hide Loader
         setLoading(false);
-        // console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.success === true) {
-          setIsRegistraionSuccess(true);
-          console.log("Registration Successful. Please Login to proceed");
-        } else {
-          setErrorText(responseJson.message);
-        }
-      })
-      .catch((error) => {
+        setIsRegistraionSuccess(true);
+        console.log("Registration Successful. Please Login to proceed");
+      } else {
         //Hide Loader
         setLoading(false);
-        setErrorText(error.message);
-        console.error(error);
-      });
+        setErrorText(response.message ?? "Unknown error occurred");
+      }
+    } catch (error) {
+      //Hide Loader
+      setLoading(false);
+      if (error instanceof Error) {
+        setErrorText(error.message ?? "Unknown error occurred");
+      }
+    }
   };
   if (isRegistraionSuccess) {
     return (
