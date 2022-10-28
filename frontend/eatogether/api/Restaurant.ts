@@ -94,7 +94,7 @@ export async function getRestaurantInfo(
  * @param active Set favourite on or off
  * @return whether the operation is successful
  **/
- export async function setRestaurantFavourite(
+ export async function setFavouriteRestaurant(
   ETToken: string,
   restaurantID: string,
   active: boolean,
