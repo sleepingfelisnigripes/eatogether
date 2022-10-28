@@ -92,7 +92,7 @@ export async function getRestaurantInfo(
  * @param ETToken The ET jwt token
  * @param restaurantID The restaurant to set favourite status
  * @param active Set favourite on or off
- * @return whether the operation is successful
+ * @return a ServerResponse
  **/
  export async function setFavouriteRestaurant(
   ETToken: string,
