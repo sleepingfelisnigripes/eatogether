@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoggedInUser, IUserSliceState } from "../redux/userSlice";
 // import { RootState as ReduxRootState } from "../redux/store";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { loginUser } from "../../api/User";
 
 type Props = StackScreenProps<RootNavParamList, "Login">;
 
@@ -28,7 +29,6 @@ const LoginScreen = ({ navigation }: Props) => {
   const [userPassword, setUserPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
-``
   const passwordInputRef = createRef<TextInput>();
   const height = useHeaderHeight();
   const dispatch = useDispatch();
@@ -77,50 +77,36 @@ const LoginScreen = ({ navigation }: Props) => {
       return;
     }
     setLoading(true);
-    let dataToSend = { username: username, password: userPassword };
-    let formBody = JSON.stringify(dataToSend);
+
     // console.log(formBody);
     try {
-      const response = await fetch("https://api.eatogether.site/login", {
-        method: "POST",
-        body: formBody,
-        headers: {
-          //Header Defination
-          "Content-Type": "application/json",
-        },
-      });
-      const responseJson: ServerResponse = await response.json();
-      // console.log(responseJson);
-
+      const response: ServerResponse = await loginUser(username, userPassword);
       //Hide Loader
       setLoading(false);
-      // console.log(responseJson);
 
       // If server responds log in successful
-      if (responseJson.status === "success") {
-        AsyncStorage.setItem("user_id", responseJson.data.user_id);
-        AsyncStorage.setItem("username", responseJson.data.username);
-        AsyncStorage.setItem("user_photo", responseJson.data.user_photo);
-        AsyncStorage.setItem("ETToken", responseJson.data.ETToken);
-        AsyncStorage.setItem("StreamToken", responseJson.data.StreamToken);
+      if (response.status === "success") {
+        AsyncStorage.setItem("user_id", response.data.user_id);
+        AsyncStorage.setItem("username", response.data.username);
+        AsyncStorage.setItem("user_photo", response.data.user_photo);
+        AsyncStorage.setItem("ETToken", response.data.ETToken);
+        AsyncStorage.setItem("StreamToken", response.data.StreamToken);
         const userData: IUserSliceState = {
-          user_id: responseJson.data.user_id,
-          username: responseJson.data.username,
-          user_photo: responseJson.data.user_photo,
-          ETToken: responseJson.data.ETToken,
-          StreamToken: responseJson.data.StreamToken,
+          user_id: response.data.user_id,
+          username: response.data.username,
+          user_photo: response.data.user_photo,
+          ETToken: response.data.ETToken,
+          StreamToken: response.data.StreamToken,
         };
         dispatch(setLoggedInUser(userData));
-        // console.log(useSelector((state: ReduxRootState) => state.user));
-        // console.log(userData);
 
         // Clear password input box
         setUserPassword("");
         navigation.navigate("TabNavigationRoutes");
       } else {
         setErrortext(
-          responseJson.message != null
-            ? responseJson.message
+          response.message != null
+            ? response.message
             : "A connection error occured. Please try again later."
         );
       }
@@ -128,7 +114,6 @@ const LoginScreen = ({ navigation }: Props) => {
       //Hide Loader
       setLoading(false);
       if (error instanceof Error) {
-        console.error(error);
         setErrortext(
           error.message != null
             ? error.message
