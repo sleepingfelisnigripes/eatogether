@@ -2,6 +2,8 @@ import { LatLng } from "./Latlng";
 import { API_URL, ServerResponse } from "./Common";
 import { Review } from "./Review";
 import { Group } from "./Group";
+import { RootState as ReduxRootState } from "../src/redux/store";
+import { useSelector } from "react-redux";
 
 export type Restaurant = {
   restaurantID: string;
@@ -75,6 +77,55 @@ export async function getRestaurantInfo(
     } else {
       return Promise.reject(new Error(serverResponse.message ?? "Error when fetching restaurants"));
     }
+  } catch (error) {
+    // Handle the error
+    return Promise.reject(
+      error instanceof Error
+        ? error.message ?? "Unknown Error"
+        : "Unknown Error"
+    );
+  }
+}
+
+/**
+ * Get Restaurant object by restaurantID
+ * @param ETToken The ET jwt token
+ * @param restaurantID The restaurant to set favourite status
+ * @param active Set favourite on or off
+ * @return whether the operation is successful
+ **/
+ export async function setRestaurantFavourite(
+  ETToken: string,
+  restaurantID: string,
+  active: boolean,
+): Promise<ServerResponse> {
+  try {
+    const body: string = JSON.stringify(({
+      restaurant_id: restaurantID,
+      active: active
+    }));
+    console.log(body)
+    const response: Response = await fetch(
+      `${API_URL}/restaurant/favourite`,
+      {
+        method: "POST",
+        headers: {
+          authourization: `Bearer ${ETToken}`,
+          "Content-type": "Application/json"
+        },
+        body: body
+      }
+    );
+    const serverResponse: ServerResponse = await response.json();
+    
+    if (response.ok) {
+        return serverResponse;
+      } else {
+        console.log(serverResponse.message);
+        return Promise.reject(
+          new Error(serverResponse.message ?? "Error while updating favourite restaurant")
+        );
+      }
   } catch (error) {
     // Handle the error
     return Promise.reject(
