@@ -48,9 +48,100 @@ export async function createGroup(
       return serverResponse;
     } else {
       return Promise.reject(
-        new Error(serverResponse.message ?? "Error while posting review")
+        new Error(serverResponse.message ?? "Error while creating group")
       );
     }
+  } catch (error) {
+    // Handle the error
+    return Promise.reject(
+      error instanceof Error
+        ? error.message ?? "Unknown Error"
+        : "Unknown Error"
+    );
+  }
+}
+
+/**
+ * To join or leave a group
+ * @param ETToken
+ * @param groupID
+ * @param active True = Join the group, False = Leave the group
+ * @return a ServerResponse
+ **/
+async function updateGroupMembership(
+  ETToken: string,
+  groupID: string,
+  active: boolean
+): Promise<ServerResponse> {
+  try {
+    const dataToSend = {
+      group_id: groupID,
+      active: active,
+    };
+
+    const response = await fetch(`${API_URL}/group/join`, {
+      method: "POST",
+      body: JSON.stringify(dataToSend),
+      headers: {
+        //Header Defination
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ETToken}`,
+      },
+    });
+    const serverResponse: ServerResponse = await response.json();
+    if (response.ok) {
+      return serverResponse;
+    } else {
+      return Promise.reject(
+        new Error(serverResponse.message ?? "Error while joining/leaving group")
+      );
+    }
+  } catch (error) {
+    // Handle the error
+    return Promise.reject(
+      error instanceof Error
+        ? error.message ?? "Unknown Error"
+        : "Unknown Error"
+    );
+  }
+}
+
+/**
+ * To join  a group
+ * @param ETToken
+ * @param groupID
+ * @return a ServerResponse
+ **/
+export async function joinGroup(
+  ETToken: string,
+  groupID: string
+): Promise<ServerResponse> {
+  try {
+    const response = await updateGroupMembership(ETToken, groupID, true);
+    return response;
+  } catch (error) {
+    // Handle the error
+    return Promise.reject(
+      error instanceof Error
+        ? error.message ?? "Unknown Error"
+        : "Unknown Error"
+    );
+  }
+}
+
+/**
+ * To leave  a group
+ * @param ETToken
+ * @param groupID
+ * @return a ServerResponse
+ **/
+export async function leaveGroup(
+  ETToken: string,
+  groupID: string
+): Promise<ServerResponse> {
+  try {
+    const response = await updateGroupMembership(ETToken, groupID, false);
+    return response;
   } catch (error) {
     // Handle the error
     return Promise.reject(
