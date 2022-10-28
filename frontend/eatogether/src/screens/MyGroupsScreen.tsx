@@ -93,7 +93,7 @@ export default function MyGroupsScreen() {
     <OverlayProvider topInset={60}>
       <TouchableOpacity onPress={onBackPress} disabled={!channel}>
         <View style={{ height: 80, paddingLeft: 16, paddingTop: 40 }}>
-          {channel && <Text style={{marginTop: 10, fontSize: 25}}>Back</Text>}
+          {channel && <Text style={{ marginTop: 10, fontSize: 25 }}>Back</Text>}
         </View>
       </TouchableOpacity>
       <View style={{ flex: 1 }}>

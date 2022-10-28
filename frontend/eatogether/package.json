@@ -9,11 +9,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
-
     "@ant-design/icons": "^4.7.0",
     "@react-native-camera-roll/camera-roll": "^5.0.4",
     "@react-native-community/netinfo": "9.3.0",
-    "@react-native-async-storage/async-storage": "~1.17.3",
+    "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/stack": "^6.3.2",
