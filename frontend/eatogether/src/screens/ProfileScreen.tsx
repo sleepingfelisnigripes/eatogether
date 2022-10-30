@@ -25,7 +25,7 @@ export default function ProfileScreen({ navigation }: any) {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
-      console.log("Profile Screen is focused");
+      //console.log("Profile Screen is focused");
       // Call any action
     });
 
@@ -41,7 +41,7 @@ export default function ProfileScreen({ navigation }: any) {
       //const userInfo = await getUserInfo(user_id);
       setUser(userInfo);
       setResaurants(userInfo?.favouriteRestaurants ?? []);
-      console.log(userInfo?.favouriteRestaurants??[]);
+      //console.log(userInfo?.favouriteRestaurants??[]);
       
     })();
   }, []);
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   restaurant: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#FFBA08",
+    borderColor: "#CCCCCC",
     borderRadius: 5,
     marginTop: 4,
     marginBottom: 4,
