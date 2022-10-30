@@ -12,10 +12,11 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Icons from "react-native-vector-icons/Ionicons";
 import { getUserInfo, User } from "../../api/User";
-import store from "../redux/store";
 import { AirbnbRating } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Restaurant } from "../../api/Restaurant";
+import { useSelector } from "react-redux";
+import { RootState as ReduxRootState } from "../redux/store";
 
 export default function ProfileScreen({ navigation }: any) {
   const [user, setUser] = useState<User>({});
@@ -32,10 +33,12 @@ export default function ProfileScreen({ navigation }: any) {
     return unsubscribe;
   }, [navigation]);
 
+  const { user_id } = useSelector((state: ReduxRootState) => state.user);
+
   useEffect(() => {
     (async () => {
       //const userInfo = await getUserInfo(store.getState().user.user_id);
-      const userInfo = await getUserInfo("2");
+      const userInfo = await getUserInfo(user_id);
       setUser(userInfo);
       setResaurants(userInfo?.favouriteRestaurants ?? []);
       //console.log(userInfo?.favouriteRestaurants??[]);
