@@ -139,26 +139,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     })();
   }, [followMe]);
 
-  async function handleLogout(): Promise<void> {
-
-    // const dispatch = useDispatch();
-
-    // Clear AsyncStorage keys
-    const clearAsyncStorage = async () => {
-      const keys = ["user_id", "username", "user_photo", "token"];
-      try {
-        await AsyncStorage.multiRemove(keys);
-      } catch (e) {
-        // remove error
-        console.log("Done clearing AsyncStorage");
-      }
-    };
-    await clearAsyncStorage();
-
-    // Navigate back to login screen
-    navigation.navigate("Login");
-  } */
-
   return (
     <>
       <View style={styles.bannerContainer}>
@@ -166,9 +146,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
           {greetings + ", "}
           {useSelector((state: ReduxRootState) => state.user.username)}!
         </Text>
-        {/* <Text style={styles.logoutButton} onPress={handleLogout}>
-          Logout
-        </Text> */}
       </View>
 
       <MapView
@@ -257,7 +234,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 20,
     color: "#ffffff",
-    fontWeight: '500',
+    fontWeight: "500",
     //fontFamily:"times"
   },
   /* logoutButton: {
