@@ -297,6 +297,8 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     //paddingLeft: 20,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius:5, 
   },
 
   restaurantInfo: {
