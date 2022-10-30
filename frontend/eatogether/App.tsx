@@ -57,10 +57,10 @@ function MyTabs() {
           }
 
           // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={"#DC2F02"} />;
+          return <Ionicons name={iconName} size={size} color={"#E85D04"} />;
         },
         headerShown: false,
-        tabBarActiveTintColor: "#DC2F02",
+        tabBarActiveTintColor: "#E85D04",
         tabBarInactiveTintColor: "gray",
       })}
     >

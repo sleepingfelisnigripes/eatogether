@@ -181,7 +181,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
         <>
           <Button
-            color="#DC2F02"
+            color="#E85D04"
             title={`Follow me: ${followMe ? "ON" : "OFF"}`}
             style={styles.button}
             onPress={() => {
@@ -189,7 +189,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
             }}
           />
           <Button
-            color="#DC2F02"
+            color="#E85D04"
             title="Show my current location"
             onPress={() => {
               (async () => {
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",
-    backgroundColor: "#DC2F02",
+    backgroundColor: "#E85D04",
   },
   greetings: {
     flex: 5,
