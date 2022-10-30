@@ -15,7 +15,7 @@ import {
 } from "stream-chat-expo";
 import { Group } from "../../api/Group";
 import { getUserInfo } from "../../api/User";
-import Card from "../components/Card";
+// import Card from "../components/Card";
 import ChatScreen from "./ChatScreen";
 import { RootState } from "../redux/store";
 
