@@ -186,16 +186,16 @@ useEffect(() => {
 }, [navigation]);
 
 
-useEffect(() => {
+// useEffect(() => {
 
-  if(selectedIndex){
+//   if(selectedIndex){
 
-    console.log("D")
-  }else{
+//     console.log("D")
+//   }else{
 
-    console.log("R")
-  }
-}, [selectedIndex])
+//     console.log("R")
+//   }
+// }, [selectedIndex])
 
 
 
