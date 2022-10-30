@@ -139,7 +139,7 @@ const RegisterScreen = ({ navigation }: Props) => {
     );
   }
   return (
-    <View style={{ flex: 1, backgroundColor: "#307ecc" }}>
+    <View style={{ flex: 1, backgroundColor: "#F48C06" }}>
       <Loader loading={loading} />
       <ScrollView
         keyboardShouldPersistTaps="never"
@@ -282,11 +282,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonStyle: {
-    backgroundColor: "#7ECC30",
+    backgroundColor: "#DC2F02",
     borderWidth: 0,
     color: "#FFFFFF",
     borderColor: "#7ECC30",
     height: 40,
+    width:200,
+    alignSelf: 'center',
     alignItems: "center",
     borderRadius: 30,
     marginLeft: 35,
@@ -295,19 +297,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   photoButtonStyle: {
-    backgroundColor: "#5798D8",
+    backgroundColor: "#DC2F02",
     borderWidth: 0,
     color: "#FFFFFF",
     borderColor: "#5798D8",
     height: 40,
-    width: 150,
+    width: 200,
     alignItems: "center",
     alignSelf: "center",
     borderRadius: 30,
     // marginLeft: 35,
     // marginRight: 35,
-    marginTop: 20,
-    // marginBottom: 20,
+    marginTop: 40,
+    marginBottom: -20,
   },
   buttonTextStyle: {
     color: "#FFFFFF",

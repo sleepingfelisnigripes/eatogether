@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#307ecc",
+    backgroundColor: "#F48C06",
     alignContent: "center",
   },
   SectionStyle: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: "#7ECC30",
+    backgroundColor: "#DC2F02",
     borderWidth: 0,
     color: "#FFFFFF",
     borderColor: "#7ECC30",
