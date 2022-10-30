@@ -127,7 +127,7 @@ const LoginScreen = ({ navigation }: Props) => {
     <View style={styles.mainBody}>
       <Loader loading={loading} />
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
         contentContainerStyle={{
           flex: 1,
           justifyContent: "center",
@@ -155,15 +155,15 @@ const LoginScreen = ({ navigation }: Props) => {
               <TextInput
                 style={styles.inputStyle}
                 onChangeText={(username) => setUsername(username)}
-                placeholder="Username"
-                placeholderTextColor="#8b9cb5"
-                autoCapitalize="none"
-                keyboardType="default"
-                returnKeyType="next"
+                placeholder='Username'
+                placeholderTextColor='#8b9cb5'
+                autoCapitalize='none'
+                keyboardType='default'
+                returnKeyType='next'
                 onSubmitEditing={() => {
                   passwordInputRef.current && passwordInputRef.current.focus();
                 }}
-                underlineColorAndroid="#f000"
+                underlineColorAndroid='#f000'
                 blurOnSubmit={false}
               />
             </View>
@@ -172,15 +172,15 @@ const LoginScreen = ({ navigation }: Props) => {
                 style={styles.inputStyle}
                 onChangeText={(userPassword) => setUserPassword(userPassword)}
                 value={userPassword}
-                placeholder="Password"
-                placeholderTextColor="#8b9cb5"
-                keyboardType="default"
+                placeholder='Password'
+                placeholderTextColor='#8b9cb5'
+                keyboardType='default'
                 ref={passwordInputRef}
                 onSubmitEditing={Keyboard.dismiss}
                 blurOnSubmit={false}
                 secureTextEntry={true}
-                underlineColorAndroid="#f000"
-                returnKeyType="done"
+                underlineColorAndroid='#f000'
+                returnKeyType='done'
               />
             </View>
             {errortext != "" ? (
