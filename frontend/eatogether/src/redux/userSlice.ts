@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IUserSliceState {
   user_id: string;
@@ -13,23 +13,23 @@ const initialState: IUserSliceState = {
   username: "",
   user_photo: "",
   ETToken: "",
-  StreamToken: ""
-}
+  StreamToken: "",
+};
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setLoggedInUser: (state, action: PayloadAction<IUserSliceState>) => {
-      state.user_id = action.payload.user_id,
-      state.username = action.payload.username,
-      state.user_photo = action.payload.user_photo,
-      state.ETToken = action.payload.ETToken,
-      state.StreamToken = action.payload.StreamToken
-    }
-  }
-})
+      (state.user_id = action.payload.user_id),
+        (state.username = action.payload.username),
+        (state.user_photo = action.payload.user_photo),
+        (state.ETToken = action.payload.ETToken),
+        (state.StreamToken = action.payload.StreamToken);
+    },
+  },
+});
 
-export const { setLoggedInUser } = userSlice.actions
+export const { setLoggedInUser } = userSlice.actions;
 
 export default userSlice.reducer;

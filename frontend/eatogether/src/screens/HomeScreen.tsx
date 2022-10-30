@@ -5,10 +5,7 @@ import * as Location from "expo-location";
 import { Button } from "@rneui/themed";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { RootNavParamList } from "../../App";
-import { useDispatch, useSelector } from "react-redux";
-import { IUserSliceState, setLoggedInUser } from "../redux/userSlice";
-// import { useDispatch, useSelector } from "react-redux";
-// import { setUsers } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,9 +14,6 @@ import { getAllRestaurants, Restaurant } from "../../api/Restaurant";
 type Props = BottomTabScreenProps<RootNavParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props): JSX.Element {
-  // const userName = useSelector((state: ReduxRootState) => state.user.userName);
-  // const dispatch = useDispatch();
-
   const mapZoom: number = 0.004;
   const UNIMELB_REGION = {
     latitude: -37.796671094693004,
@@ -160,15 +154,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     };
     await clearAsyncStorage();
 
-    // Clear Redux store
-    // const userData: IUserSliceState = {
-    //   user_id: "",
-    //   username: "",
-    //   user_photo: "",
-    //   token: "",
-    // };
-    // dispatch(setLoggedInUser(userData));
-
     // Navigate back to login screen
     navigation.navigate("Login");
   }
@@ -191,7 +176,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
         style={styles.mapContainer}
         initialRegion={UNIMELB_REGION}
         showsUserLocation={true}
-        // followsUserLocation={true}
         showsMyLocationButton={false}
         showsPointsOfInterest={false}
         pitchEnabled={false}

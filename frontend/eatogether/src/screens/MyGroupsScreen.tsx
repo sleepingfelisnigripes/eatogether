@@ -21,13 +21,6 @@ import { RootState } from "../redux/store";
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
 
-const createTestChannelMethod = async () => {
-  const channel = client.channel("messaging", "travel", {
-    members: ["jlahey", "57"],
-  });
-  await channel.create();
-};
-
 export default function MyGroupsScreen() {
   const [channel, setChannel] = useState<ChannelType>();
   const [clientReady, setClientReady] = useState(false);
@@ -36,6 +29,7 @@ export default function MyGroupsScreen() {
     (state: RootState) => state.user
   );
 
+  // @ts-ignore
   useEffect(() => {
     const setupClient = async () => {
       try {
@@ -47,36 +41,23 @@ export default function MyGroupsScreen() {
           },
           StreamToken
         );
-        // await client.connectUser(
-        //   {
-        //     id: "jlahey",
-        //     name: "Jim Lahey",
-        //     image: "https://i.imgur.com/fR9Jz14.png",
-        //   },
-        //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.h0GRGn_d6lh5Pq0oGZq2ng12n7GmaGXSnG_sqaQE5k8"
-        // );
+
         setClientReady(true);
-
-        const channel = client.channel("messaging", {
-          members: ["jlahey", "57"],
-          name: "Awesome channel about traveling",
-        });
-
-        setChannel(channel);
 
         // // fetch the channel state, subscribe to future updates
         // const state = await channel.watch();
-
-        // createTestChannelMethod().catch((e) => {
-        //   console.log("error");
-        //   console.log(e);
-        // });
       } catch (e) {
         console.log(e);
       }
     };
 
     setupClient();
+
+    return () => {
+      client.disconnectUser();
+      setClientReady(false);
+      console.log("Stream logged off");
+    };
   }, []);
 
   const onBackPress = () => {
