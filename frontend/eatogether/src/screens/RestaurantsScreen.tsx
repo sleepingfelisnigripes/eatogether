@@ -207,11 +207,15 @@ return (
     <Text style={styles.subHeader}>   Sort By:</Text>
     <ButtonGroup
       buttons={['Rating', 'Distance']}
+      //innerBorderStyle = {{color: "#DC2F02"}} 
       selectedIndex={selectedIndex}
       onPress={(value) => {
         setSelectedIndex(value);
       }}
-      containerStyle={{ backgroundColor : "white" }}
+      containerStyle={{ backgroundColor : "white"  }}
+      selectedButtonStyle = {styles.buttonGroup}
+      
+      
     />
     <ScrollView>
     <View style={styles.container}>
@@ -219,7 +223,15 @@ return (
       // selectedIndex &&
       (selectedIndex ? dataD: dataR).map((l, i) => (
         <ListItem key={i}>
-        <Card>
+        
+        <Card containerStyle={{ borderTopRightRadius: 20,
+      borderTopLeftRadius: 20, borderBottomRightRadius: 20,
+      borderBottomLeftRadius: 20,}}>
+
+        
+
+          
+          
         {/* <Text style={{ marginTop: 5, marginRight: 5 }}>
           Rating: {l.rating}
         </Text> */}
@@ -242,6 +254,7 @@ return (
           {l.distance >= 1000? parseInt(l.distance)/1000 : parseInt(l.distance)} {l.distance >= 1000? "km" : "m"}
         </Text>
         <Button 
+          color="#DC2F02"
           icon={
             <Icon
               name="code"
@@ -286,13 +299,21 @@ return (
       height: 150,
       
     },
+
+    buttonGroup:{
+      backgroundColor: "#DC2F02",
+      // borderTopRightRadius: 20,
+      // borderTopLeftRadius: 20,
+      // borderWidth: 0,
+    },
+    
     name: {
       fontSize: 16,
       marginTop: 5,
     },
 
     subHeader: {
-      backgroundColor : "white",
+      backgroundColor : "grey5",
       color : "black",
       textAlign : "left",
       paddingVertical : 5,
