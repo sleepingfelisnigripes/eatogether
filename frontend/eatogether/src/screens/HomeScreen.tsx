@@ -206,7 +206,7 @@ console.log("Rendered Home Screen");
 
 const styles = StyleSheet.create({
   bannerContainer: {
-    flex: 1,
+    flex: 1.1,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",

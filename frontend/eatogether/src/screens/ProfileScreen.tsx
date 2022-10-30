@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 17,
     fontWeight: "500",
-    color: "#003049",
+    color: "#370617",
     textAlign: "center",
     textAlignVertical: "center",
     fontFamily: "Futura",
@@ -279,7 +279,12 @@ const styles = StyleSheet.create({
   restaurant: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#edede9",
+    borderColor: "#FFBA08",
+    borderRadius: 5,
+    marginTop: 4,
+    marginBottom: 4,
+    marginLeft: 8,
+    marginRight: 8,
   },
 
   /* favoriteRestaurant: {
@@ -297,7 +302,7 @@ const styles = StyleSheet.create({
   restaurantInfo: {
     fontSize: 17,
     fontWeight: "500",
-    color: "#003049",
+    color: "#370617",
     fontFamily: "Futura",
     //paddingLeft: 15,
     marginLeft: 15,
