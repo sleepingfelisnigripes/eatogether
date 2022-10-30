@@ -36,12 +36,13 @@ export default function ProfileScreen({ navigation }: any) {
   const { user_id } = useSelector((state: ReduxRootState) => state.user);
 
   useEffect(() => {
-    (async () => {
-      //const userInfo = await getUserInfo(store.getState().user.user_id);
-      const userInfo = await getUserInfo(user_id);
+    (async () => {     
+    const userInfo = await getUserInfo(user_id);
+      //const userInfo = await getUserInfo(user_id);
       setUser(userInfo);
       setResaurants(userInfo?.favouriteRestaurants ?? []);
       //console.log(userInfo?.favouriteRestaurants??[]);
+      
     })();
   }, []);
 
@@ -176,12 +177,12 @@ export default function ProfileScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    flex: 2,
     backgroundColor: "rgba(0, 0, 0, 0.75)",
   },
 
   titleView: {
-    flex: 1,
+    flex: 1.5,
     width: "100%",
     borderColor: "#FFFFFF",
     borderTopLeftRadius: 13,
@@ -189,6 +190,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
+    justifyContent: 'center',
   },
 
   titleText: {
@@ -270,7 +272,7 @@ const styles = StyleSheet.create({
   },
 
   body: {
-    flex: 4,
+    flex: 7,
     backgroundColor: "#FFFFFF",
   },
 
