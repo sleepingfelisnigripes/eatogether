@@ -78,7 +78,6 @@ export async function getRestaurantInfo(
       return Promise.reject(
         new Error(serverResponse.message ?? "Error when fetching restaurants")
       );
-<<<<<<< HEAD
     }
   } catch (error) {
     // Handle the error
@@ -127,8 +126,6 @@ export async function setFavouriteRestaurant(
           serverResponse.message ?? "Error while updating favourite restaurant"
         )
       );
-=======
->>>>>>> c16027e (perf: formating code)
     }
   } catch (error) {
     // Handle the error

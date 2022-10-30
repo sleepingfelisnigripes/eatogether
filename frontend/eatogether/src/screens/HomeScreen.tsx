@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { Linking, StyleSheet, Text, View } from "react-native";
-import MapView from "react-native-maps";
+import { Linking, StyleSheet, Text, View, Image } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { Button } from "@rneui/themed";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllRestaurants, Restaurant } from "../../api/Restaurant";
 
 type Props = BottomTabScreenProps<RootNavParamList, "Home">;
 
@@ -26,66 +27,54 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   const trackingTimer = useRef<NodeJS.Timer | null>(null);
   const [locationPermissionStatus, setLocationPermissionStatus] =
     useState<Location.PermissionStatus>(Location.PermissionStatus.DENIED);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   // Update greetings according to time of day
   let greetings: string = "Good day";
   const currentHour = parseInt(moment().format("H"));
-  if (currentHour < 12) greetings = "🌞 Good morning";
-  else if (currentHour < 18) greetings = "☕️ Good afternoon";
-  else greetings = "🌝 Good evening";
+  if (currentHour < 12) {
+    greetings = "🌞 Good morning";
+  } else if (currentHour < 18) {
+    greetings = "☕️ Good afternoon";
+  } else {
+    greetings = "🌝 Good evening";
+  }
+
+  // Get user's permission for location service once the screen is launched
+  useEffect(() => {
+    // (async () => {
+    //   await checkLocationPermission();
+    //   if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+    //     return;
+    //   }
+    //   await updateUserPosition();
+    //   try {
+    //     const restaurants = await getAllRestaurants();
+    //     setRestaurants(restaurants);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // })();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
       console.log("Home screen is focused");
-      // Call any action
+      // Update restaurant list
+      (async () => {
+        try {
+          const restaurants = await getAllRestaurants();
+          setRestaurants(restaurants);
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
-
-  // Get user's permission for location service once the screen is launched
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      setLocationPermissionStatus(status);
-      if (status !== Location.PermissionStatus.GRANTED) {
-        return;
-      }
-      await updateUserPosition();
-    })();
-  }, []);
-
-  // Handle whether the user wants the map moves as the user moves
-  useEffect(() => {
-    (async () => {
-      try {
-        await checkLocationPermission();
-        if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
-          throw new Error("Location Permission not granted");
-        }
-      } catch (error) {
-        return;
-      }
-      if (followMe) {
-        updateUserPosition();
-        trackingTimer.current = setInterval(async () => {
-          await updateUserPosition();
-        }, 3000);
-      } else {
-        if (trackingTimer.current) {
-          clearInterval(trackingTimer.current);
-        }
-      }
-
-      return () => {
-        if (trackingTimer.current) {
-          clearInterval(trackingTimer.current);
-        }
-      };
-    })();
-  }, [followMe]);
 
   async function checkLocationPermission(): Promise<void> {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -120,7 +109,38 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     }
   }
 
- /*  async function handleLogout(): Promise<void> {
+  // Handle whether the user wants the map moves as the user moves
+  useEffect(() => {
+    (async () => {
+      try {
+        await checkLocationPermission();
+        if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+          throw new Error("Location Permission not granted");
+        }
+      } catch (error) {
+        return;
+      }
+      if (followMe) {
+        updateUserPosition();
+        trackingTimer.current = setInterval(async () => {
+          await updateUserPosition();
+        }, 3000);
+      } else {
+        if (trackingTimer.current) {
+          clearInterval(trackingTimer.current);
+        }
+      }
+
+      return () => {
+        if (trackingTimer.current) {
+          clearInterval(trackingTimer.current);
+        }
+      };
+    })();
+  }, [followMe]);
+
+  async function handleLogout(): Promise<void> {
+
     // const dispatch = useDispatch();
 
     // Clear AsyncStorage keys
@@ -160,7 +180,27 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
         showsMyLocationButton={false}
         showsPointsOfInterest={false}
         pitchEnabled={false}
-      />
+      >
+        {restaurants.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={marker.latlng}
+            title={marker.restaurantName}
+            description={
+              marker.cuisineType +
+              "\n" +
+              `${
+                marker.noOfGroupsToday > 0 ? marker.noOfGroupsToday : "No"
+              } upcoming group${marker.noOfGroupsToday > 1 ? "s" : ""}`
+            }
+          >
+            <Image
+              source={{ uri: marker.restaurantImage }}
+              style={{ width: 65, height: 65, borderRadius: 50 }}
+            ></Image>
+          </Marker>
+        ))}
+      </MapView>
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
         <>
           <Button
@@ -202,7 +242,6 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
     </>
   );
 }
-console.log("Rendered Home Screen");
 
 const styles = StyleSheet.create({
   bannerContainer: {

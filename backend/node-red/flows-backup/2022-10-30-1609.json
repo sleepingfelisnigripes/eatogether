@@ -1,0 +1,21 @@
+[
+    {
+        "id": "c0dbb572d4ae5c70",
+        "type": "function",
+        "z": "9d44931fbddf8220",
+        "name": "Rename fields",
+        "func": "\nmsg.rename_fn = payload => payload.map(\n    (item) => ({\n        restaurantID: item.restaurant_id,\n        restaurantName: item.restaurant_name,\n        restaurantImage: item.restaurant_image,  // URL of the main/facade image of the restaurant\n        noOfGroupsToday: parseInt(msg.upcomingGroupCount[item.restaurant_id] != null ? msg.upcomingGroupCount[item.restaurant_id]: 0),  // Number of existing groups for today\n        cuisineType: item.restaurant_cuisine_type,      // Type of cuisine served\n        address: item.restaurant_address,          // address of the restaurant\n        latlng: {latitude: parseFloat(item.restaurant_lat), \n            longitude: parseFloat(item.restaurant_lng)},          // LatLng coordinate of the restaurant\n        openingHours: item.restaurant_open_hours,     // Opening hours of the restaurant, e.g. 10:00am-9:00pm\n        rating: item.restaurant_rating,           // Average rating of the restaurant (0-5 stars)\n    })\n)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 220,
+        "wires": [
+            [
+                "adb69e7cea45a0a6"
+            ]
+        ]
+    }
+]
