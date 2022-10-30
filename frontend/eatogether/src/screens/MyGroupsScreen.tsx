@@ -15,8 +15,8 @@ import {
 } from "stream-chat-expo";
 import { Group } from "../../api/Group";
 import { getUserInfo } from "../../api/User";
-import Card from "../components/card";
-import ChatScreen from "./chat-screen";
+import Card from "../components/Card";
+import ChatScreen from "./ChatScreen";
 import { RootState } from "../redux/store";
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
