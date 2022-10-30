@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import { ImageResult } from "expo-image-manipulator";
 import mime from "mime";
-=======
->>>>>>> c16027e (perf: formating code)
 import { API_URL, ServerResponse } from "./Common";
 import { Group } from "./Group";
 import { Restaurant } from "./Restaurant";
@@ -59,7 +56,6 @@ export async function getUserInfo(userID: string): Promise<User> {
     );
   }
 }
-<<<<<<< HEAD
 
 /**
  * Register user
@@ -158,5 +154,3 @@ export async function loginUser(
     );
   }
 }
-=======
->>>>>>> c16027e (perf: formating code)
