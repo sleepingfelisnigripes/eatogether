@@ -5,10 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { Text, Card, Button, Icon } from '@rneui/themed';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { RootNavParamList } from "../../App";
-import { ListItem, Avatar } from '@rneui/themed'
+import { ListItem, Avatar } from '@rneui/themed';
 // import { getAllRestaurants } from '../../api/Restaurant';
-import { ButtonGroup } from '@rneui/themed'
+import { ButtonGroup } from '@rneui/themed';
 import * as Location from "expo-location";
+import { AirbnbRating } from "@rneui/themed";
 
 
 
@@ -35,9 +36,8 @@ export default function RestaurantScreen({ navigation }: Props) {
   const [isLoading, setLoading] = useState(true);
   var [dataR, setDataR] = useState<{ restaurantID: any; restaurantImage: any; restaurantName: any; address: any; rating: any; latlng: any; distance: any;}[]>([]);
   var [dataD, setDataD] = useState<{ restaurantID: any; restaurantImage: any; restaurantName: any; address: any; rating: any; latlng: any; distance: any;}[]>([]);
-  // var [data, setData] = useState<{ restaurantID: any; restaurantImage: any; restaurantName: any; address: any; rating: any; latlng: any; distance: any;}[]>([]);
+ 
   
-
  
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -63,15 +63,15 @@ export default function RestaurantScreen({ navigation }: Props) {
   function algorithm(point1:any, point2:any): any {
     let [x1, y1] = point1;
     let [x2, y2] = point2;
-      let Lat1 = rad(x1); // 纬度
+      let Lat1 = rad(x1); 
       let Lat2 = rad(x2);
-      let a = Lat1 - Lat2;//  两点纬度之差
-      let b = rad(y1) - rad(y2); // 经度之差
+      let a = Lat1 - Lat2;
+      let b = rad(y1) - rad(y2); 
       let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) 
             + Math.cos(Lat1) * Math.cos(Lat2) * Math.pow(Math.sin(b / 2), 2)));
-          //  计算两点距离的公式
-      s = s * 6378137.0;//  弧长等于弧度乘地球半径（半径为米）
-      s = Math.round(s * 10000) / 10000;//  精确距离的数值
+          
+      s = s * 6378137.0;
+      s = Math.round(s * 10000) / 10000;
       return s;
   
   }
@@ -189,7 +189,7 @@ useEffect(() => {
 // useEffect(() => {
 
 //   if(selectedIndex){
-
+    
 //     console.log("D")
 //   }else{
 
@@ -204,14 +204,14 @@ useEffect(() => {
     
 return (
   <>
-    <Text style={styles.subHeader}></Text>
+    <Text style={styles.subHeader}>   Sort By:</Text>
     <ButtonGroup
       buttons={['Rating', 'Distance']}
       selectedIndex={selectedIndex}
       onPress={(value) => {
         setSelectedIndex(value);
       }}
-      containerStyle={{ marginBottom: 20 }}
+      containerStyle={{ backgroundColor : "white" }}
     />
     <ScrollView>
     <View style={styles.container}>
@@ -220,10 +220,16 @@ return (
       (selectedIndex ? dataD: dataR).map((l, i) => (
         <ListItem key={i}>
         <Card>
-        <Text style={{ marginTop: 5, marginRight: 5 }}>
+        {/* <Text style={{ marginTop: 5, marginRight: 5 }}>
           Rating: {l.rating}
-        </Text>
+        </Text> */}
         <Card.Title>{l.restaurantName}</Card.Title>
+        <AirbnbRating
+                    isDisabled={true}
+                    showRating={false}
+                    defaultRating={l.rating}
+                    size={15}
+                  />
         <Card.Divider />
         <Card.Image
           style={styles.image}
@@ -232,8 +238,8 @@ return (
               l.restaurantImage
           }}
         />
-        <Text style={{ marginBottom: 10 }}>
-          {l.distance} m
+        <Text style={{ marginTop: 5,marginBottom: 5 }}>
+          {l.distance >= 1000? parseInt(l.distance)/1000 : parseInt(l.distance)} {l.distance >= 1000? "km" : "m"}
         </Text>
         <Button 
           icon={
@@ -287,9 +293,10 @@ return (
 
     subHeader: {
       backgroundColor : "white",
-      color : "white",
-      textAlign : "center",
+      color : "black",
+      textAlign : "left",
       paddingVertical : 5,
-      marginBottom : 10
+      marginTop : 50,
+      fontSize : 16 
     },
     });
