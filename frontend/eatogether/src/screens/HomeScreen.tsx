@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, StyleSheet, Text, View, Image } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { Button } from "@rneui/themed";
@@ -165,9 +165,9 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
           {greetings + ", "}
           {useSelector((state: ReduxRootState) => state.user.username)}!
         </Text>
-        <Text style={styles.logoutButton} onPress={handleLogout}>
+        {/* <Text style={styles.logoutButton} onPress={handleLogout}>
           Logout
-        </Text>
+        </Text> */}
       </View>
 
       <MapView
@@ -185,8 +185,19 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
             key={index}
             coordinate={marker.latlng}
             title={marker.restaurantName}
-            description={marker.cuisineType}
-          />
+            description={
+              marker.cuisineType +
+              "\n" +
+              `${
+                marker.noOfGroupsToday > 0 ? marker.noOfGroupsToday : "No"
+              } upcoming group${marker.noOfGroupsToday > 1 ? "s" : ""}`
+            }
+          >
+            <Image
+              source={{ uri: marker.restaurantImage }}
+              style={{ width: 65, height: 65, borderRadius: 50 }}
+            ></Image>
+          </Marker>
         ))}
       </MapView>
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
