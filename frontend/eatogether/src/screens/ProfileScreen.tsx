@@ -1,185 +1,197 @@
 import React, {Component, useEffect, useState} from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { getUserInfo, User, UserGroup } from '../../api/User';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView, ImageBackground } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icons from 'react-native-vector-icons/Ionicons'
+import { getUserInfo, User} from '../../api/User';
 import store from '../redux/store';
-//import { useSelector} from 'react-redux';
-//import { setLoggedInUser, IUserSliceState } from '../redux/userSlice';
-//import { getUserInfo } from '../../api/User';
-//import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { setLoggedInUser, IUserSliceState } from "../redux/userSlice";
-//import { useDispatch, useSelector } from "react-redux";
+import { AirbnbRating } from '@rneui/themed';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Restaurant } from '../../api/Restaurant';
 
 
-let sexIcons: string = 'eye-off-outline';
-let sexIconsColor: string = '#FFFFFF';
-//const username = store.getState().user.username;
-//const sex = store.getState().user.user_sex;
 
 
-export default class ProfileScreen extends Component {
 
-  /* constructor(props) {
-    super(props);
+export default function ProfileScreen({navigation}: any) {
 
-    this.state = {
-      userInfo: store.getState().user,
-    };
+  const [user, setUser] = useState<User>({});
+  const [restaurants, setResaurants] = useState<Restaurant[]>([])
 
-    store.subscribe(() => {
-      this.setState({
-        userInfo: store.getState(),
-      });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      console.log("Profile Screen is focused");
+      // Call any action
     });
-  } */
-  componentDidMount(): void {
-    (async () => {
-      const userInfo: User = await getUserInfo("2");
-      console.log(userInfo);
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(()=>{
+    (async()=> {
+      //const userInfo = await getUserInfo(store.getState().user.user_id);
+      const userInfo = await getUserInfo('2');
+      setUser(userInfo);
+      setResaurants(userInfo?.favouriteRestaurants??[]);
+      //console.log(userInfo?.favouriteRestaurants??[]);
     })();
-  }
+  },[])
 
-  render() {
-
-
-
-    /* useEffect(() => { 
-      getUserInfo(userId).then(user => setUsers(user?.upcomingUser?? []))
-                         .catch(e => { console.log('Errors when fetching users joined group')
-                                       console.log(e) })
-    }, []) 
- */
-
-    //var sex = store.getState().user.user_sex;
-
-    const sex = 'F';
-
-    if (sex == 'F') {
-      sexIcons = 'female';
-      sexIconsColor = '#ffafcc'
-    } else if (sex == "M") {
-      sexIcons = 'male';
-      sexIconsColor = '#a2d2ff';
-    } else if (sex == 'NB') {
-      sexIcons = 'male-female';
-      sexIconsColor = '#cdb4db'
-    } else {
-    }
-
-    var userId = store.getState().user.user_id;
-    
-    
-
- 
-
-
-    var userPhoto = store.getState().user.user_photo;
-
-
-    return (
-
-      <View>
-        <View style = {styles.header}>
-          <Image style = {styles.backgroundImage} source={{uri: 'https://simply-delicious-food.com/wp-content/uploads/2019/07/Pancake-board-3.jpg'}}/>
-          <Image style = {styles.profilePhoto} source={{uri: userPhoto}}/>
-          <Text style = {styles.name} > {store.getState().user.username} </Text>
-          <Text style = {styles.nameId} >eatogether ID: {userId}</Text>
-          <TouchableOpacity style={styles.buttonEditProfile} onPress={() => this.props.navigation.navigate("Restaurants")}>
-            <Text style = {styles.buttonEditProfileText} >Edit Profile</Text>  
-          </TouchableOpacity>             
-          <TouchableOpacity style={styles.buttonSet}>
-            <Icon name = "settings-outline" color = '#FFFFFF' size={18}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBack}>
-            <Icon name = {sexIcons} color = {sexIconsColor} size={16}/>
-          </TouchableOpacity>
-        </View>
-
-        <View style = {styles.body}>
-          <View style = {styles.title}>
-            <Text style = {styles.titleText}>Favorite Restaurants</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-} 
-
-
-/* export default function ProfileScreen() {
+  async function handleLogout(): Promise<void> {
+    // const dispatch = useDispatch();
+    // Clear AsyncStorage keys
+    const clearAsyncStorage = async () => {
+      const keys = ["user_id", "username", "user_photo", "token"];
+      try {
+        await AsyncStorage.multiRemove(keys);
+      } catch (e) {
+        // remove error
+        console.log("Done clearing AsyncStorage");
+      }
+    };
+    await clearAsyncStorage();
   
+    // Clear Redux store
+    // const userData: IUserSliceState = {
+    //   user_id: "",
+    //   username: "",
+    //   user_photo: "",
+    //   token: "",
+    // };
+    // dispatch(setLoggedInUser(userData));
+  
+    // Navigate back to login screen
+    navigation.navigate("Login");
+  }
+  
+
+  const sex = user.gender;
+  let sexIcons: string = 'eye-off-outline';
+  let sexIconsColor: string = '#FFFFFF';
+
   if (sex == 'F') {
-    sexIcons = 'female';
+    sexIcons = 'gender-female';
     sexIconsColor = '#ffafcc'
   } else if (sex == "M") {
-    sexIcons = 'male';
+    sexIcons = 'gender-male';
     sexIconsColor = '#a2d2ff';
-  } else if (sex == 'NB') {
-    sexIcons = 'male-female';
+  } else if (sex == 'ND') {
+    sexIcons = 'gender-male-female';
     sexIconsColor = '#cdb4db'
   } else {
 
   }
-  var restaurantCount: Number = 5;
-  for (var i=0; i < restaurantCount; i++) {
-    <Text style = {styles.titleText}>Favorite Restaurant</Text>
-  }
   return (
-    <View>
-        <View style = {styles.header}>
-          <Image style = {styles.backgroundImage} source={{uri: 'https://simply-delicious-food.com/wp-content/uploads/2019/07/Pancake-board-3.jpg'}}/>
-          <Image style = {styles.profilePhoto} source={{uri: 'https://dl.memuplay.com/new_market/img/com.vicman.newprofilepic.icon.2022-06-07-21-33-07.png'}}/>
-          <Text style = {styles.name} >FirstName LastName</Text>
-          <Text style = {styles.nameId} >eatogether ID: </Text>
-          <Text style = {styles.shortIntro} >Introduce yourself</Text>
-          <TouchableOpacity style={styles.buttonEditProfile}>
-            <Text style = {styles.buttonEditProfileText} >Edit Profile</Text>  
-          </TouchableOpacity>          
-          <TouchableOpacity style={styles.buttonSet}>
-            <Icon name = "settings-outline" color = '#FFFFFF' size={18}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBack}>
-            <Icon name = {sexIcons} color = {sexIconsColor} size={16}/>
-          </TouchableOpacity>
-        </View>
-        <View style = {styles.body}>
-          <View style = {styles.title}>
+    <SafeAreaView style = {{flex:1, justifyContent:'flex-start'}}>
+        <ImageBackground style = {styles.header} resizeMode = "cover" source = {{uri: 'https://simply-delicious-food.com/wp-content/uploads/2019/07/Pancake-board-3.jpg'}} imageStyle={{opacity: 0.6}}>
+          <View style = {{flex: 6, flexDirection: 'row'}}>
+            
+            <View style = {{flex: 3, justifyContent: 'center', alignItems: 'center'}}>
+              <Image style = {styles.profilePhoto} source={{uri: user.userPhoto}}/>
+            </View>
+            
+            <View style = {styles.userTitle}>
+
+              <View style = {{flex: 1, justifyContent: 'center'}}>
+                
+                <Text style = {styles.name} >{user.userName}</Text>
+                <Text style = {styles.nameId} >eatogether ID: {user.userID}</Text>
+                
+                <View style = {styles.sexIcon}>
+                  <Icon name = {sexIcons} color= {sexIconsColor} size = {15}></Icon>
+                </View>
+
+              </View>
+              
+              <View style = {styles.logout}>
+                
+                <TouchableOpacity style={styles.logoutContent} onPress={handleLogout} >
+                  <Icon name = "logout"  color = '#FFFFFF' size={15}>Logout</Icon>
+                </TouchableOpacity>         
+              
+              </View>
+            
+            </View>
+          
+          </View>
+
+          <View style = {styles.titleView}>
             <Text style = {styles.titleText}>Favorite Restaurant</Text>
           </View>
-          <Text style = {styles.titleText}>Restaurant</Text>
-          <Text style = {styles.titleText}>Favorite Restaurant</Text>
-          <Text style = {styles.titleText}>Favorite Restaurant</Text>
-          <Text style = {styles.titleText}>Favorite Restaurant</Text>
-          for (var i=0; i < restaurantCount; i++) {
-            <Text style = {styles.titleText}>Favorite Restaurant</Text>
-          }
+        
+        </ ImageBackground>
+        
+        <View style = {styles.body}>  
+          <ScrollView style = {{flex: 1}}>
+      
+            {restaurants.map((item)=>(   
+              
+              <TouchableOpacity style = {{flex: 1}} onPress={()=>navigation.navigate("Restaurants")}>
+                
+                <View style = {styles.restaurant} >
+
+                  <View style = {{flex: 1}}>
+                    <Image style = {styles.restaurantImage} source = {{uri: item.restaurantImage}}/>
+                  </View>
+
+                  <View style = {{flex: 3}}>
+                    <Text style = {styles.restaurantInfo}>{item.restaurantName}</Text>
+                    <AirbnbRating isDisabled = {true} showRating = {false} defaultRating = {item.rating} size = {15} />
+                    <Icons name = "location-outline" style = {styles.restaurantInfo}>{item.address}</Icons>
+                  </View>
+                  
+                </View>
+
+              </TouchableOpacity>
+            ))}
+          
+          </ScrollView>
         </View>
-      </View>
+    </SafeAreaView>
   );
-}  */
+} 
 
 const styles = StyleSheet.create({
 
   header: {
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
   },
 
-  backgroundImage:{
-    backgroundColor: "#67B99A",
-    opacity: 0.6,
-    height:220,
+  titleView: {
+    flex: 1, 
+    width: '100%',
+    borderColor: "#FFFFFF", 
+    borderTopLeftRadius: 13, 
+    borderTopRightRadius: 13,
+    borderWidth:1, 
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+
   },
 
+  titleText: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: "#003049",
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontFamily: "Futura",
+    //backgroundColor: '#FFFFFF',
+  },
+  
   profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 70,
+    width: 82,
+    height: 82,
+    borderRadius: 25,
     borderWidth: 4,
-    borderColor: "white",
-    left: 35,
-    top: 55,
-    position: 'absolute',
-    backgroundColor: 'transparent',
+    borderColor: "#FFFFFF",
+  },
+  
+  userTitle: {
+    flex: 6,
+    paddingTop: 7,
   },
 
   // Set Name format
@@ -187,10 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#FFFFFF",
     fontWeight: '700',
-    position: 'absolute',
-    left: 145,
-    top: 75,
-    backgroundColor: 'transparent',
+    fontFamily: "Futura", 
   },
 
   // Set ID format 
@@ -198,121 +207,77 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#FFFFFF",
     fontWeight: '400',
-    position: 'absolute',
+    /* position: 'absolute',
     left: 145,
-    top: 110,
-    backgroundColor: 'transparent',
+    top: 110, */
+    fontFamily: "Futura",
+    //backgroundColor: 'transparent',
   },
 
-  /* shortIntro: {
-    fontSize: 15,
-    color: "#FFFFFF",
-    fontWeight: '400',
-    position: 'absolute',
-    left: 37,
-    top: 166,
-    backgroundColor: 'transparent',
-  }, */
-
-  buttonEditProfile: {
-    position: 'absolute',
+  sexIcon :{
+   /*  position: 'absolute',
     top: 173,
-    right: 80,
+    left: 37, */
+    width: 21,
+    height: 21,
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: 'rgba(150, 150, 150, 0.9)',
+    backgroundColor: 'rgba(150, 150, 150, 0.6)',
+    marginTop:5,
+  },
+
+  logout: {
+    flexDirection: 'row', 
+    justifyContent:"flex-end", 
+    marginTop:-30, 
+    marginRight:15,
+    marginBottom:10, 
+    //position: 'absolute',
+  },
+
+  logoutContent: {
     height: 25,
-    width: 100,
+    width: 80,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
     borderColor: '#FFFFFF',
     borderWidth: 1,
-    //backgroundColor: 'transparent',
-    backgroundColor: 'rgba(150, 150, 150, 0.4)',
-    //opacity: 0.5,
+    backgroundColor: 'rgba(150, 150, 150, 0.6)',
   },
 
-  buttonSet: {
-    //flex: 1,
-    position: 'absolute',
-    top: 173,
-    right: 20,
-    height: 25,
-    width: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 30,
-    borderColor: '#FFFFFF',
-    borderWidth: 1,
-    //backgroundColor: 'transparent',
-    backgroundColor: 'rgba(150, 150, 150, 0.4)',
-    //opacity: 0.5,
-  },
-
-  buttonEditProfileText: {
-    color: '#FFFFFF',
-    backgroundColor: 'transparent',
-    fontWeight: '500',
-    fontSize: 15,
-  },
-
-  /* sexIcon: {
-    
-    position: 'absolute',
-    top: 193,
-    left: 37,
-    backgroundColor: 'transparent',
-    borderRadius:30,
-    borderWidth:1,
-    borderColor: '#FFFFFF', 
-  }, */
-
-  iconBack :{
-    position: 'absolute',
-    top: 173,
-    left: 37,
-    height: 25,
-    width: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius:30,
-    borderColor: '#FFFFFF',
-    borderWidth: 1,
-    backgroundColor: 'rgba(150, 150, 150, 0.4)',
-  },
-
-  /* setIcon: {
-    color: '#FFFFFF',
-    backgroundColor: 'transparent',
-    fontWeight: '500',
-    fontSize: 15,
-  }, */
-  
   body: {
-    
-    position: 'absolute',
-    top: 212,
-    width: '100%',
-    borderWidth:3,
-    borderTopStartRadius: 10,
-    borderTopEndRadius: 10,
-    borderColor: "#FFFFFF",
-    backgroundColor: 'rgba(150, 150, 150, 0.4)',
-    
-  },
-
-  title: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 4,
     backgroundColor: '#FFFFFF',
-
   },
 
-  titleText: {
-    fontSize: 20,
+  restaurant :{
+    flexDirection: 'row',
+    borderWidth:1,
+    borderColor: '#edede9',
+  },
+
+  /* favoriteRestaurant: {
+    //top: 500,
+    borderWidth:1,
+    borderColor: '#FFFFF0',
+  }, */
+
+  restaurantImage: {
+    height: '100%',
+    width: "100%",
+    //paddingLeft: 20,
+  },
+
+  restaurantInfo: {
+    fontSize: 17,
     fontWeight: '500',
-    fontColor: 'rgb(0,0,0)',
-    backgroundColor: '#FFFFFF',
-    fontSize: 16,
-    color: "#6c584c",
+    color: "#003049",
+    fontFamily: "Futura",
+    paddingLeft: 15
   }
 
 });
