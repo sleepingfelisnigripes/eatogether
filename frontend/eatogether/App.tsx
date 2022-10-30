@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
 import { registerRootComponent } from "expo";
+import { color } from "react-native-reanimated";
 
 AppRegistry.registerComponent(expo.name, () => App);
 
@@ -56,14 +57,14 @@ function MyTabs() {
           }
 
           // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName} size={size} color={"#DC2F02"} />;
         },
         headerShown: false,
-        tabBarActiveTintColor: "teal",
+        tabBarActiveTintColor: "#DC2F02",
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
       <Tab.Screen name="My Groups" component={MyGroupsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

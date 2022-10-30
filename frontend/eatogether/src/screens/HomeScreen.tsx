@@ -140,6 +140,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   }, [followMe]);
 
   async function handleLogout(): Promise<void> {
+
     // const dispatch = useDispatch();
 
     // Clear AsyncStorage keys
@@ -156,7 +157,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
 
     // Navigate back to login screen
     navigation.navigate("Login");
-  }
+  } */
 
   return (
     <>
@@ -203,7 +204,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
         <>
           <Button
-            color="secondary"
+            color="#DC2F02"
             title={`Follow me: ${followMe ? "ON" : "OFF"}`}
             style={styles.button}
             onPress={() => {
@@ -211,6 +212,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
             }}
           />
           <Button
+            color="#DC2F02"
             title="Show my current location"
             onPress={() => {
               (async () => {
@@ -222,7 +224,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
       ) : (
         <>
           <Button
-            color="success"
+            color="#DC2F02"
             title="Grant Location Permission"
             onPress={() => {
               (async () => {
@@ -243,11 +245,11 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
 
 const styles = StyleSheet.create({
   bannerContainer: {
-    flex: 1,
+    flex: 1.1,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",
-    backgroundColor: "#307ecc",
+    backgroundColor: "#DC2F02",
   },
   greetings: {
     flex: 5,
@@ -255,14 +257,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 20,
     color: "#ffffff",
+    fontWeight: '500',
+    //fontFamily:"times"
   },
-  logoutButton: {
+  /* logoutButton: {
     flex: 1,
     fontSize: 15,
     marginBottom: 15,
     // marginStart: 30,
     color: "#ffff00",
-  },
+  }, */
   mapContainer: {
     flex: 8,
     alignItems: "center",

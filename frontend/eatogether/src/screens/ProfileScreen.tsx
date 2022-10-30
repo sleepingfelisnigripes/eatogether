@@ -41,7 +41,7 @@ export default function ProfileScreen({ navigation }: any) {
       //const userInfo = await getUserInfo(user_id);
       setUser(userInfo);
       setResaurants(userInfo?.favouriteRestaurants ?? []);
-      //console.log(userInfo?.favouriteRestaurants??[]);
+      console.log(userInfo?.favouriteRestaurants??[]);
       
     })();
   }, []);
@@ -60,16 +60,6 @@ export default function ProfileScreen({ navigation }: any) {
     };
     await clearAsyncStorage();
 
-    // Clear Redux store
-    // const userData: IUserSliceState = {
-    //   user_id: "",
-    //   username: "",
-    //   user_photo: "",
-    //   token: "",
-    // };
-    // dispatch(setLoggedInUser(userData));
-
-    // Navigate back to login screen
     navigation.navigate("Login");
   }
 
@@ -138,7 +128,8 @@ export default function ProfileScreen({ navigation }: any) {
 
       <View style={styles.body}>
         <ScrollView style={{ flex: 1 }}>
-          {restaurants.map((item, index) => (
+          {restaurants.length != 0? 
+            restaurants.map((item, index) => (
             <TouchableOpacity
               key={`restaurant_${index}`}
               style={{ flex: 1 }}
@@ -156,19 +147,28 @@ export default function ProfileScreen({ navigation }: any) {
                   <Text style={styles.restaurantInfo}>
                     {item.restaurantName}
                   </Text>
-                  <AirbnbRating
-                    isDisabled={true}
-                    showRating={false}
-                    defaultRating={item.rating}
-                    size={15}
-                  />
-                  <Icons name="location-outline" style={styles.restaurantInfo}>
+                  <View style={{alignSelf: "flex-start", marginLeft: 12}}>
+                      <AirbnbRating
+                        isDisabled={true}
+                        showRating={false}
+                        defaultRating={item.rating}
+                        size={15}
+                      />
+                  </View>
+                  <Icons name="location-outline" size={12} style={{marginLeft: 15, marginBottom: 2, marginTop:2}}>
                     {item.address}
                   </Icons>
                 </View>
               </View>
             </TouchableOpacity>
-          ))}
+          ))
+          :
+          (
+            <View style = {{flex:1, alignItems: 'center', margin: 10}}>
+              <Text style = {{fontWeight:'300', color: "#003049"}}>Your favoriate restaurant list is empty!</Text>
+            </View>
+            
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 17,
     fontWeight: "500",
-    color: "#003049",
+    color: "#370617",
     textAlign: "center",
     textAlignVertical: "center",
     fontFamily: "Futura",
@@ -279,7 +279,12 @@ const styles = StyleSheet.create({
   restaurant: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#edede9",
+    borderColor: "#FFBA08",
+    borderRadius: 5,
+    marginTop: 4,
+    marginBottom: 4,
+    marginLeft: 8,
+    marginRight: 8,
   },
 
   /* favoriteRestaurant: {
@@ -297,8 +302,10 @@ const styles = StyleSheet.create({
   restaurantInfo: {
     fontSize: 17,
     fontWeight: "500",
-    color: "#003049",
+    color: "#370617",
     fontFamily: "Futura",
-    paddingLeft: 15,
+    //paddingLeft: 15,
+    marginLeft: 15,
+    marginTop: 2,
   },
 });
