@@ -17,8 +17,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Restaurant } from "../../api/Restaurant";
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
+//@ts-ignore
+import ProfileScreenBannerImage from "../../assets/profile-screen-banner.jpg";
 
 export default function ProfileScreen({ navigation }: any) {
+  //@ts-ignore
   const [user, setUser] = useState<User>({});
   const [restaurants, setResaurants] = useState<Restaurant[]>([]);
 
@@ -36,13 +39,12 @@ export default function ProfileScreen({ navigation }: any) {
   const { user_id } = useSelector((state: ReduxRootState) => state.user);
 
   useEffect(() => {
-    (async () => {     
-    const userInfo = await getUserInfo(user_id);
+    (async () => {
+      const userInfo = await getUserInfo(user_id);
       //const userInfo = await getUserInfo(user_id);
       setUser(userInfo);
       setResaurants(userInfo?.favouriteRestaurants ?? []);
       //console.log(userInfo?.favouriteRestaurants??[]);
-      
     })();
   }, []);
 
@@ -83,9 +85,7 @@ export default function ProfileScreen({ navigation }: any) {
       <ImageBackground
         style={styles.header}
         resizeMode="cover"
-        source={{
-          uri: "https://simply-delicious-food.com/wp-content/uploads/2019/07/Pancake-board-3.jpg",
-        }}
+        source={ProfileScreenBannerImage}
         imageStyle={{ opacity: 0.6 }}
       >
         <View style={{ flex: 6, flexDirection: "row" }}>
@@ -128,46 +128,50 @@ export default function ProfileScreen({ navigation }: any) {
 
       <View style={styles.body}>
         <ScrollView style={{ flex: 1 }}>
-          {restaurants.length != 0? 
+          {restaurants.length != 0 ? (
             restaurants.map((item, index) => (
-            <TouchableOpacity
-              key={`restaurant_${index}`}
-              style={{ flex: 1 }}
-              onPress={() => navigation.navigate("Restaurants")}
-            >
-              <View style={styles.restaurant}>
-                <View style={{ flex: 1 }}>
-                  <Image
-                    style={styles.restaurantImage}
-                    source={{ uri: item.restaurantImage }}
-                  />
-                </View>
+              <TouchableOpacity
+                key={`restaurant_${index}`}
+                style={{ flex: 1 }}
+                onPress={() => navigation.navigate("Restaurants")}
+              >
+                <View style={styles.restaurant}>
+                  <View style={{ flex: 1 }}>
+                    <Image
+                      style={styles.restaurantImage}
+                      source={{ uri: item.restaurantImage }}
+                    />
+                  </View>
 
-                <View style={{ flex: 3 }}>
-                  <Text style={styles.restaurantInfo}>
-                    {item.restaurantName}
-                  </Text>
-                  <View style={{alignSelf: "flex-start", marginLeft: 12}}>
+                  <View style={{ flex: 3 }}>
+                    <Text style={styles.restaurantInfo}>
+                      {item.restaurantName}
+                    </Text>
+                    <View style={{ alignSelf: "flex-start", marginLeft: 12 }}>
                       <AirbnbRating
                         isDisabled={true}
                         showRating={false}
                         defaultRating={item.rating}
                         size={15}
                       />
+                    </View>
+                    <Icons
+                      name="location-outline"
+                      size={12}
+                      style={{ marginLeft: 15, marginBottom: 2, marginTop: 2 }}
+                    >
+                      {item.address}
+                    </Icons>
                   </View>
-                  <Icons name="location-outline" size={12} style={{marginLeft: 15, marginBottom: 2, marginTop:2}}>
-                    {item.address}
-                  </Icons>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))
-          :
-          (
-            <View style = {{flex:1, alignItems: 'center', margin: 10}}>
-              <Text style = {{fontWeight:'300', color: "#003049"}}>Your favoriate restaurant list is empty!</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <View style={{ flex: 1, alignItems: "center", margin: 10 }}>
+              <Text style={{ fontWeight: "300", color: "#003049" }}>
+                Your favoriate restaurant list is empty!
+              </Text>
             </View>
-            
           )}
         </ScrollView>
       </View>
@@ -190,7 +194,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 
   titleText: {
@@ -297,8 +301,6 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     //paddingLeft: 20,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius:5, 
   },
 
   restaurantInfo: {
