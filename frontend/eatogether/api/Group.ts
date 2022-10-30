@@ -12,7 +12,6 @@ export type Group = {
   currentParticipants: number; // Current number of participants joined
   participants: User[]; // List of participants
 };
-<<<<<<< HEAD
 
 /**
  * Create a group and put the user in the group
@@ -152,5 +151,3 @@ export async function leaveGroup(
     );
   }
 }
-=======
->>>>>>> c16027e (perf: formating code)
