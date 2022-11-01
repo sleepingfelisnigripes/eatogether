@@ -185,7 +185,7 @@ const RegisterScreen = ({ navigation }: Props) => {
               onChangeText={(UserName) => setUsername(UserName)}
               underlineColorAndroid="#f000"
               placeholder="Username"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#dddddd"
               autoCapitalize="sentences"
               returnKeyType="next"
               onSubmitEditing={() =>
@@ -201,7 +201,7 @@ const RegisterScreen = ({ navigation }: Props) => {
               onChangeText={(UserPassword) => setUserPassword(UserPassword)}
               underlineColorAndroid="#f000"
               placeholder="Password"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#dddddd"
               ref={passwordInputRef}
               returnKeyType="next"
               secureTextEntry={true}
@@ -227,7 +227,7 @@ const RegisterScreen = ({ navigation }: Props) => {
           />
 
           <View style={styles.ProfilePhotoSectionStyle}>
-            <Text style={{ color: "white", marginBottom: 10, fontSize: 18 }}>
+            <Text style={{ color: "white", fontSize: 18 }}>
               Profile Photo (Optional)
             </Text>
             {photo && (
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 15,
-    color: "#8b9cb5",
+    color: "#dddddd",
   },
   selectedTextStyle: {
     fontSize: 15,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 35,
     marginRight: 35,
-    marginBottom: 20,
+    marginBottom: 40,
   },
   buttonStyle: {
     backgroundColor: "#DC2F02",
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     // marginLeft: 35,
     // marginRight: 35,
-    marginTop: 40,
+    marginTop: 30,
     marginBottom: -20,
   },
   buttonTextStyle: {
