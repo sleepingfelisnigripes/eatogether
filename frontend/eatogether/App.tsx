@@ -33,6 +33,7 @@ export type RootNavParamList = {
   RegisterScreen: undefined;
   Auth: undefined;
   TabNavigationRoutes: undefined;
+  RestaurantProfileScreen: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootNavParamList>();
@@ -64,7 +65,7 @@ function MyTabs() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen}/>
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
       <Tab.Screen name="My Groups" component={MyGroupsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

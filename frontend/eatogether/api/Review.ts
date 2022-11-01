@@ -11,7 +11,6 @@ export type Review = {
   reviewerPhoto: string; // Url of the reviewer profile photo
   reviewRating: number; // The rating given by the review user
   reviewText: string; // Text content of the review
-<<<<<<< HEAD
   reviewImage: string; // Urls of review reviewImages
 };
 
@@ -76,10 +75,6 @@ export async function postReview(
     );
   }
 }
-=======
-  reviewImages: string[]; // Urls of review reviewImages
-};
->>>>>>> c16027e (perf: formating code)
 
 // /**
 //  * Get Review object by reviewID
