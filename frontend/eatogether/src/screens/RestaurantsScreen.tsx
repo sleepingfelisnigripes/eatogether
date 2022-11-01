@@ -17,7 +17,7 @@ import { ListItem, Avatar } from "@rneui/themed";
 // import { getAllRestaurants } from '../../api/Restaurant';
 import { ButtonGroup } from "@rneui/themed";
 import * as Location from "expo-location";
-import { AirbnbRating } from "@rneui/themed";
+import { AirbnbRating,Tab } from "@rneui/themed";
 
 const BASE_URI = "https://api.eatogether.site/restaurants";
 
@@ -27,6 +27,8 @@ type Props = BottomTabScreenProps<RootNavParamList, "Restaurants">;
 
 export default function RestaurantScreen({ navigation }: Props) {
   const [isLoading, setLoading] = useState(true);
+  const [locationPermissionStatus, setLocationPermissionStatus] =
+    useState<Location.PermissionStatus>(Location.PermissionStatus.DENIED);
   var [dataR, setDataR] = useState<
     {
       restaurantID: any;
@@ -50,19 +52,36 @@ export default function RestaurantScreen({ navigation }: Props) {
     }[]
   >([]);
 
+  var [dataPx, setDataPx] = useState(0);
+  var [dataPy, setDataPy] = useState(0);
+
+
+
+
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+
+  async function checkLocationPermission(): Promise<void> {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    console.log(status);
+    setLocationPermissionStatus(status);
+  }
+
+
 
   async function updateUserPosition(): Promise<void> {
     try {
+      await checkLocationPermission();
       const latestPosition: Location.LocationObject =
         await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Low,
         });
 
-      Position = {
-        latitude: latestPosition.coords.latitude,
-        longitude: latestPosition.coords.longitude,
-      };
+      setDataPx(latestPosition.coords.latitude)
+      setDataPy(latestPosition.coords.longitude)
+      
+
+
     } catch (error) {
       return;
     }
@@ -93,23 +112,13 @@ export default function RestaurantScreen({ navigation }: Props) {
     return (d * Math.PI) / 180.0;
   }
 
-  function getAllRestaurants() {
+  async function getAllRestaurants(): Promise<void> {
     fetch(BASE_URI)
       .then((response) => response.json())
       .then((json) => {
-        //json = json.data;
-        // console.log('json==>`')
-        // console.log(json)
         const array_URL = [];
-
         for (var i = 0; i < json?.data.length; i++) {
           var max = i;
-          const Roint = [
-            json.data[i]?.latlng.latitude,
-            json.data[i]?.latlng.longitude,
-          ];
-          const UPoint = [Position.latitude, Position.longitude];
-          const dis = algorithm(Roint, UPoint);
           for (var j = i + 1; j < json?.data.length; j++) {
             if (json.data[max].rating <= json.data[j].rating) {
               max = j;
@@ -120,54 +129,74 @@ export default function RestaurantScreen({ navigation }: Props) {
             json.data[i] = json.data[max];
             json.data[max] = temp;
           }
-          array_URL.push({
-            restaurantID: json?.data[i]?.restaurantID,
-            restaurantImage: json?.data[i]?.restaurantImage,
-            restaurantName: json?.data[i]?.restaurantName,
-            address: json?.data[i]?.address,
-            rating: json?.data[i]?.rating,
-            latlng: json?.data[i]?.latlng,
-            distance: dis,
-          });
 
-          //console.log(typeof Number(json?.data[i]?.rating));
+          if((locationPermissionStatus == Location.PermissionStatus.GRANTED)){
+            const Roint = [
+              json.data[i]?.latlng.latitude,
+              json.data[i]?.latlng.longitude,
+            ];
+            const UPoint = [dataPx, dataPy];
+            const dis = algorithm(Roint, UPoint);
+
+            array_URL.push({
+              restaurantID: json?.data[i]?.restaurantID,
+              restaurantImage: json?.data[i]?.restaurantImage,
+              restaurantName: json?.data[i]?.restaurantName,
+              address: json?.data[i]?.address,
+              rating: json?.data[i]?.rating,
+              latlng: json?.data[i]?.latlng,
+              distance: dis,
+            });
+
+          }else{
+
+            array_URL.push({
+              restaurantID: json?.data[i]?.restaurantID,
+              restaurantImage: json?.data[i]?.restaurantImage,
+              restaurantName: json?.data[i]?.restaurantName,
+              address: json?.data[i]?.address,
+              rating: json?.data[i]?.rating,
+              latlng: json?.data[i]?.latlng,
+              distance: NaN,
+          })
         }
-
-        //setData(json);
         setDataR([...array_URL]);
-        //setData([...array_URL]);
-
-        for (var i = 0; i < array_URL.length; i++) {
-          var min = i;
-          for (var j = i + 1; j < array_URL.length; j++) {
-            if (array_URL[min].distance >= array_URL[j].distance) {
-              min = j;
-            }
-
+        if((locationPermissionStatus == Location.PermissionStatus.GRANTED)){
+          for (var i = 0; i < array_URL.length; i++) {
+            var min = i;
+            for (var j = i + 1; j < array_URL.length; j++) {
+              if (array_URL[min].distance > array_URL[j].distance) {
+                min = j;
+              }
+              }
             if (min != i) {
+              
               var t: any = array_URL[i];
               array_URL[i] = array_URL[min];
               array_URL[min] = t;
             }
           }
+  
+          setDataD([...array_URL]);
         }
-
-        setDataD([...array_URL]);
+      }
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
+    
   }
 
   useEffect(() => {
-    //getAllRestaurants()
-    updateUserPosition();
-    getAllRestaurants();
-  }, []);
+    (async () => {
+      
+        await updateUserPosition().then(() => {
+          getAllRestaurants();
+        });
 
-  // useEffect(() => {
-  //   console.log('data=.')
-  //   console.log(data)
-  // }, [data])
+        
+      })();
+     }, []);
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -176,26 +205,17 @@ export default function RestaurantScreen({ navigation }: Props) {
       // Call any action
     });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
+    // Return the  function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
 
-  // useEffect(() => {
-
-  //   if(selectedIndex){
-
-  //     console.log("D")
-  //   }else{
-
-  //     console.log("R")
-  //   }
-  // }, [selectedIndex])
-
+  
   return (
     <>
       <Text style={styles.subHeader}> Sort By:</Text>
       <ButtonGroup
-        buttons={["Rating", "Distance"]}
+         buttons={(locationPermissionStatus == Location.PermissionStatus.GRANTED) ? ["Rating", "Distance"] : ["Rating"]}
+        
         //innerBorderStyle = {{color: "#E85D04"}}
         selectedIndex={selectedIndex}
         onPress={(value) => {
