@@ -324,7 +324,7 @@ export default function RestaurantScreen({ navigation }: Props) {
                     title="View Info"
                     onPress={() => {
                       navigation.navigate("RestaurantProfile", {
-                        restaurantID: "3",
+                        restaurantID: l.restaurantID,
                       });
                     }}
                   />
