@@ -54,7 +54,26 @@ const RegisterScreen = ({ navigation }: Props) => {
       quality: 1,
     });
 
-    // console.log("Photo", result);
+    if (!result.cancelled) {
+      const manipResult = await manipulateAsync(
+        result.uri,
+        [{ resize: { width: 150 } }],
+        { compress: 0.7, format: SaveFormat.JPEG }
+      );
+      setPhoto(manipResult);
+    }
+  };
+
+  const openCamera = async () => {
+    // Ask the user for the permission to access the camera
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Please allow permission to use camera in order to take a photo.");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync();
 
     if (!result.cancelled) {
       const manipResult = await manipulateAsync(
@@ -219,13 +238,32 @@ const RegisterScreen = ({ navigation }: Props) => {
                 />
               </>
             )}
-            <TouchableOpacity
-              style={styles.photoButtonStyle}
-              activeOpacity={0.5}
-              onPress={handleChoosePhoto}
-            >
-              <Text style={styles.buttonTextStyle}>Choose Photo</Text>
-            </TouchableOpacity>
+            {photo == null ? (
+              <>
+                <TouchableOpacity
+                  style={styles.photoButtonStyle}
+                  activeOpacity={0.5}
+                  onPress={handleChoosePhoto}
+                >
+                  <Text style={styles.buttonTextStyle}>Choose Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.photoButtonStyle}
+                  activeOpacity={0.5}
+                  onPress={openCamera}
+                >
+                  <Text style={styles.buttonTextStyle}>Take a photo</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.photoButtonStyle}
+                activeOpacity={0.5}
+                onPress={() => setPhoto(null)}
+              >
+                <Text style={styles.buttonTextStyle}>Remove photo</Text>
+              </TouchableOpacity>
+            )}
           </View>
           {errorText != "" ? (
             <Text style={styles.errorTextStyle}>{errorText}</Text>
@@ -287,8 +325,8 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     borderColor: "#7ECC30",
     height: 40,
-    width:200,
-    alignSelf: 'center',
+    width: 200,
+    alignSelf: "center",
     alignItems: "center",
     borderRadius: 30,
     marginLeft: 35,
