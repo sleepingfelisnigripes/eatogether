@@ -17,6 +17,7 @@ import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
 import { registerRootComponent } from "expo";
 import { color } from "react-native-reanimated";
+import RestaurantStack from "./src/screens/RestaurantStack";
 
 AppRegistry.registerComponent(expo.name, () => App);
 
@@ -25,14 +26,16 @@ type IconName = React.ComponentProps<typeof Ionicons>["name"];
 LogBox.ignoreLogs(["Audio Video library"]); // Ignore log notification by message
 
 export type RootNavParamList = {
-  Home: {};
-  Restaurants: {};
-  "My Groups": {};
-  Profile: {};
+  Home: undefined;
+  RestaurantsList: undefined;
+  "My Groups": undefined;
+  Profile: undefined;
   Login: undefined;
   RegisterScreen: undefined;
   Auth: undefined;
   TabNavigationRoutes: undefined;
+  RestaurantProfile: { restaurantID: string };
+  Restaurants: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootNavParamList>();
@@ -64,8 +67,8 @@ function MyTabs() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen}/>
-      <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Restaurants" component={RestaurantStack} />
       <Tab.Screen name="My Groups" component={MyGroupsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

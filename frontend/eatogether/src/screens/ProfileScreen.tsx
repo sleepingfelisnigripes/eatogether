@@ -133,7 +133,14 @@ export default function ProfileScreen({ navigation }: any) {
               <TouchableOpacity
                 key={`restaurant_${index}`}
                 style={{ flex: 1 }}
-                onPress={() => navigation.navigate("Restaurants")}
+                onPress={() => {
+                  navigation.navigate("Restaurants", {
+                    screen: "RestaurantProfile",
+                    params: {
+                      restaurantID: item.restaurantID,
+                    },
+                  });
+                }}
               >
                 <View style={styles.restaurant}>
                   <View style={{ flex: 1 }}>
@@ -203,7 +210,7 @@ const styles = StyleSheet.create({
     color: "#370617",
     textAlign: "center",
     textAlignVertical: "center",
-    fontFamily: "Futura",
+    //fontFamily: "Futura",
     //backgroundColor: '#FFFFFF',
   },
 
@@ -225,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#FFFFFF",
     fontWeight: "700",
-    fontFamily: "Futura",
+    //fontFamily: "Futura",
   },
 
   // Set ID format
@@ -236,7 +243,7 @@ const styles = StyleSheet.create({
     /* position: 'absolute',
     left: 145,
     top: 110, */
-    fontFamily: "Futura",
+    //fontFamily: "Futura",
     //backgroundColor: 'transparent',
   },
 
@@ -307,7 +314,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "500",
     color: "#370617",
-    fontFamily: "Futura",
+    //fontFamily: "Futura",
     //paddingLeft: 15,
     marginLeft: 15,
     marginTop: 2,
