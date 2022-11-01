@@ -17,7 +17,7 @@ import { ListItem, Avatar } from "@rneui/themed";
 // import { getAllRestaurants } from '../../api/Restaurant';
 import { ButtonGroup } from "@rneui/themed";
 import * as Location from "expo-location";
-import { AirbnbRating,Tab } from "@rneui/themed";
+import { AirbnbRating, Tab } from "@rneui/themed";
 import { StackScreenProps } from "@react-navigation/stack";
 
 const BASE_URI = "https://api.eatogether.site/restaurants";
@@ -56,20 +56,13 @@ export default function RestaurantScreen({ navigation }: Props) {
   var [dataPx, setDataPx] = useState(0);
   var [dataPy, setDataPy] = useState(0);
 
-
-
-
   const [selectedIndex, setSelectedIndex] = useState(0);
-
 
   async function checkLocationPermission(): Promise<string> {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    console.log(status);
     setLocationPermissionStatus(status);
-    return status
+    return status;
   }
-
-
 
   async function updateUserPosition(): Promise<void> {
     try {
@@ -79,11 +72,8 @@ export default function RestaurantScreen({ navigation }: Props) {
           accuracy: Location.Accuracy.Low,
         });
 
-      setDataPx(latestPosition.coords.latitude)
-      setDataPy(latestPosition.coords.longitude)
-      
-
-
+      setDataPx(latestPosition.coords.latitude);
+      setDataPy(latestPosition.coords.longitude);
     } catch (error) {
       return;
     }
@@ -112,12 +102,13 @@ export default function RestaurantScreen({ navigation }: Props) {
 
   function rad(d: any): any {
     return (d * Math.PI) / 180.0;
-  } 
+  }
 
-  async function getAllRestaurants(lat: number, long: number, grantStatu: string): Promise<void> {
-    console.log('Check loc')
-    console.log(lat)
-    console.log(long)
+  async function getAllRestaurants(
+    lat: number,
+    long: number,
+    grantStatu: string
+  ): Promise<void> {
     fetch(BASE_URI)
       .then((response) => response.json())
       .then((json) => {
@@ -134,55 +125,44 @@ export default function RestaurantScreen({ navigation }: Props) {
             json.data[i] = json.data[max];
             json.data[max] = temp;
           }
-          console.log('granted')
-            const Roint = [
-              json.data[i]?.latlng.latitude,
-              json.data[i]?.latlng.longitude,
-            ];
-            const UPoint = [lat, long];
-            const dis = algorithm(Roint, UPoint);
+          const Roint = [
+            json.data[i]?.latlng.latitude,
+            json.data[i]?.latlng.longitude,
+          ];
+          const UPoint = [lat, long];
+          const dis = algorithm(Roint, UPoint);
 
-            array_URL.push({
-              restaurantID: json?.data[i]?.restaurantID,
-              restaurantImage: json?.data[i]?.restaurantImage,
-              restaurantName: json?.data[i]?.restaurantName,
-              address: json?.data[i]?.address,
-              rating: json?.data[i]?.rating,
-              latlng: json?.data[i]?.latlng,
-              distance: dis,
-            });
-          
-          }
-        console.log('array_URL')
-        console.log(array_URL);
+          array_URL.push({
+            restaurantID: json?.data[i]?.restaurantID,
+            restaurantImage: json?.data[i]?.restaurantImage,
+            restaurantName: json?.data[i]?.restaurantName,
+            address: json?.data[i]?.address,
+            rating: json?.data[i]?.rating,
+            latlng: json?.data[i]?.latlng,
+            distance: dis,
+          });
+        }
         setDataR([...array_URL]);
         for (var i = 0; i < array_URL.length; i++) {
-            var min = i;
-            for (var j = i + 1; j < array_URL.length; j++) {
-              if (array_URL[min].distance > array_URL[j].distance) {
-                min = j;
-              }
-              }
-            if (min != i) {
-              
-              var t: any = array_URL[i];
-              array_URL[i] = array_URL[min];
-              array_URL[min] = t;
+          var min = i;
+          for (var j = i + 1; j < array_URL.length; j++) {
+            if (array_URL[min].distance > array_URL[j].distance) {
+              min = j;
             }
           }
-          setDataD([...array_URL]);
-        
-      
+          if (min != i) {
+            var t: any = array_URL[i];
+            array_URL[i] = array_URL[min];
+            array_URL[min] = t;
+          }
+        }
+        setDataD([...array_URL]);
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
-    
   }
 
-
-
-  function getAllRestaurantsR(){
-
+  function getAllRestaurantsR() {
     fetch(BASE_URI)
       .then((response) => response.json())
       .then((json) => {
@@ -199,48 +179,47 @@ export default function RestaurantScreen({ navigation }: Props) {
             json.data[i] = json.data[max];
             json.data[max] = temp;
           }
-            // console.log('not granted11')
-            array_URL.push({
-              restaurantID: json?.data[i]?.restaurantID,
-              restaurantImage: json?.data[i]?.restaurantImage,
-              restaurantName: json?.data[i]?.restaurantName,
-              address: json?.data[i]?.address,
-              rating: json?.data[i]?.rating,
-              latlng: json?.data[i]?.latlng,
-              distance: NaN
-          })
-          setDataR([...array_URL])
-      }
+          array_URL.push({
+            restaurantID: json?.data[i]?.restaurantID,
+            restaurantImage: json?.data[i]?.restaurantImage,
+            restaurantName: json?.data[i]?.restaurantName,
+            address: json?.data[i]?.address,
+            rating: json?.data[i]?.rating,
+            latlng: json?.data[i]?.latlng,
+            distance: NaN,
+          });
+          setDataR([...array_URL]);
+        }
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
-
   }
 
-
   useEffect(() => {
-    checkLocationPermission()
-    .then((grantStatus: string) => {
-      if(grantStatus === Location.PermissionStatus.GRANTED) {
+    checkLocationPermission().then((grantStatus: string) => {
+      if (grantStatus === Location.PermissionStatus.GRANTED) {
         new Promise(async (resolve, reject) => {
           const latestPosition: Location.LocationObject =
             await Location.getCurrentPositionAsync({
               accuracy: Location.Accuracy.Low,
             });
-          resolve({lat: latestPosition.coords.latitude, long: latestPosition.coords.longitude})
-        }).then((loactionData: any) => {
-          getAllRestaurants(loactionData.lat, loactionData.long, grantStatus)
-        }).catch(e => {
-          console.log('Error when fetching restaurats data')
-          console.log(e)
+          resolve({
+            lat: latestPosition.coords.latitude,
+            long: latestPosition.coords.longitude,
+          });
         })
+          .then((loactionData: any) => {
+            getAllRestaurants(loactionData.lat, loactionData.long, grantStatus);
+          })
+          .catch((e) => {
+            console.log("Error when fetching restaurats data");
+            console.log(e);
+          });
       } else {
         getAllRestaurantsR();
       }
-    })
-
-     }, []);
-
+    });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -253,13 +232,15 @@ export default function RestaurantScreen({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  
   return (
     <>
       <Text style={styles.subHeader}> Sort By:</Text>
       <ButtonGroup
-         buttons={(locationPermissionStatus == Location.PermissionStatus.GRANTED) ? ["Rating", "Distance"] : ["Rating"]}
-        
+        buttons={
+          locationPermissionStatus == Location.PermissionStatus.GRANTED
+            ? ["Rating", "Distance"]
+            : ["Rating"]
+        }
         //innerBorderStyle = {{color: "#E85D04"}}
         selectedIndex={selectedIndex}
         onPress={(value) => {
@@ -301,17 +282,16 @@ export default function RestaurantScreen({ navigation }: Props) {
                     }}
                   />
 
-                  {locationPermissionStatus == Location.PermissionStatus.GRANTED &&
-                    
+                  {locationPermissionStatus ==
+                    Location.PermissionStatus.GRANTED && (
                     <Text style={{ marginTop: 5, marginBottom: 5 }}>
-                    {l.distance >= 1000
-                      ? parseInt(l.distance) / 1000
-                      : parseInt(l.distance)}{" "}
-                    {l.distance >= 1000 ? "km" : "m"}
-                  </Text>
-                    
-                  }
-                  
+                      {l.distance >= 1000
+                        ? parseInt(l.distance) / 1000
+                        : parseInt(l.distance)}{" "}
+                      {l.distance >= 1000 ? "km" : "m"}
+                    </Text>
+                  )}
+
                   <Button
                     color="#E85D04"
                     icon={
