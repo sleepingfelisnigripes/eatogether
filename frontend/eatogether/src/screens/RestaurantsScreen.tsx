@@ -61,17 +61,18 @@ export default function RestaurantScreen({ navigation }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
 
-  async function checkLocationPermission(): Promise<void> {
+  async function checkLocationPermission(): Promise<string> {
     const { status } = await Location.requestForegroundPermissionsAsync();
     console.log(status);
     setLocationPermissionStatus(status);
+    return status
   }
 
 
 
   async function updateUserPosition(): Promise<void> {
     try {
-      await checkLocationPermission();
+      checkLocationPermission();
       const latestPosition: Location.LocationObject =
         await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Low,
@@ -110,9 +111,12 @@ export default function RestaurantScreen({ navigation }: Props) {
 
   function rad(d: any): any {
     return (d * Math.PI) / 180.0;
-  }
+  } 
 
-  async function getAllRestaurants(): Promise<void> {
+  async function getAllRestaurants(lat: number, long: number, grantStatu: string): Promise<void> {
+    console.log('Check loc')
+    console.log(lat)
+    console.log(long)
     fetch(BASE_URI)
       .then((response) => response.json())
       .then((json) => {
@@ -129,13 +133,12 @@ export default function RestaurantScreen({ navigation }: Props) {
             json.data[i] = json.data[max];
             json.data[max] = temp;
           }
-
-          if((locationPermissionStatus == Location.PermissionStatus.GRANTED)){
+          console.log('granted')
             const Roint = [
               json.data[i]?.latlng.latitude,
               json.data[i]?.latlng.longitude,
             ];
-            const UPoint = [dataPx, dataPy];
+            const UPoint = [lat, long];
             const dis = algorithm(Roint, UPoint);
 
             array_URL.push({
@@ -147,22 +150,12 @@ export default function RestaurantScreen({ navigation }: Props) {
               latlng: json?.data[i]?.latlng,
               distance: dis,
             });
-
-          }else{
-
-            array_URL.push({
-              restaurantID: json?.data[i]?.restaurantID,
-              restaurantImage: json?.data[i]?.restaurantImage,
-              restaurantName: json?.data[i]?.restaurantName,
-              address: json?.data[i]?.address,
-              rating: json?.data[i]?.rating,
-              latlng: json?.data[i]?.latlng,
-              distance: NaN,
-          })
-        }
+          
+          }
+        console.log('array_URL')
+        console.log(array_URL);
         setDataR([...array_URL]);
-        if((locationPermissionStatus == Location.PermissionStatus.GRANTED)){
-          for (var i = 0; i < array_URL.length; i++) {
+        for (var i = 0; i < array_URL.length; i++) {
             var min = i;
             for (var j = i + 1; j < array_URL.length; j++) {
               if (array_URL[min].distance > array_URL[j].distance) {
@@ -176,25 +169,75 @@ export default function RestaurantScreen({ navigation }: Props) {
               array_URL[min] = t;
             }
           }
-  
           setDataD([...array_URL]);
-        }
-      }
+        
+      
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
     
   }
 
-  useEffect(() => {
-    (async () => {
-      
-        await updateUserPosition().then(() => {
-          getAllRestaurants();
-        });
 
-        
-      })();
+
+  function getAllRestaurantsR(){
+
+    fetch(BASE_URI)
+      .then((response) => response.json())
+      .then((json) => {
+        const array_URL = [];
+        for (var i = 0; i < json?.data.length; i++) {
+          var max = i;
+          for (var j = i + 1; j < json?.data.length; j++) {
+            if (json.data[max].rating <= json.data[j].rating) {
+              max = j;
+            }
+          }
+          if (max != i) {
+            var temp = json.data[i];
+            json.data[i] = json.data[max];
+            json.data[max] = temp;
+          }
+            console.log('not granted11')
+            array_URL.push({
+              restaurantID: json?.data[i]?.restaurantID,
+              restaurantImage: json?.data[i]?.restaurantImage,
+              restaurantName: json?.data[i]?.restaurantName,
+              address: json?.data[i]?.address,
+              rating: json?.data[i]?.rating,
+              latlng: json?.data[i]?.latlng,
+              distance: NaN
+          })
+          setDataR([...array_URL])
+      }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+
+  }
+
+
+  useEffect(() => {
+    checkLocationPermission()
+    .then((grantStatus: string) => {
+      if(grantStatus === Location.PermissionStatus.GRANTED) {
+        new Promise(async (resolve, reject) => {
+          const latestPosition: Location.LocationObject =
+            await Location.getCurrentPositionAsync({
+              accuracy: Location.Accuracy.Low,
+            });
+          resolve({lat: latestPosition.coords.latitude, long: latestPosition.coords.longitude})
+        }).then((loactionData: any) => {
+          getAllRestaurants(loactionData.lat, loactionData.long, grantStatus)
+        }).catch(e => {
+          console.log('Error when fetching restaurats data')
+          console.log(e)
+        })
+      } else {
+        getAllRestaurantsR();
+      }
+    })
+
      }, []);
 
 
@@ -229,6 +272,7 @@ export default function RestaurantScreen({ navigation }: Props) {
           {
             // selectedIndex &&
             (selectedIndex ? dataD : dataR).map((l, i) => (
+              //dataR.map((l, i) => (
               <ListItem key={i}>
                 <Card
                   containerStyle={{
