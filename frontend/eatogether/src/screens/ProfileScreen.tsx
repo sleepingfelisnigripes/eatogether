@@ -133,7 +133,14 @@ export default function ProfileScreen({ navigation }: any) {
               <TouchableOpacity
                 key={`restaurant_${index}`}
                 style={{ flex: 1 }}
-                onPress={() => navigation.navigate("Restaurants")}
+                onPress={() => {
+                  navigation.navigate("Restaurants", {
+                    screen: "RestaurantProfile",
+                    params: {
+                      restaurantID: item.restaurantID,
+                    },
+                  });
+                }}
               >
                 <View style={styles.restaurant}>
                   <View style={{ flex: 1 }}>
