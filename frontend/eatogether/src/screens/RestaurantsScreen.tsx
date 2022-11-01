@@ -199,7 +199,7 @@ export default function RestaurantScreen({ navigation }: Props) {
             json.data[i] = json.data[max];
             json.data[max] = temp;
           }
-            console.log('not granted11')
+            // console.log('not granted11')
             array_URL.push({
               restaurantID: json?.data[i]?.restaurantID,
               restaurantImage: json?.data[i]?.restaurantImage,
@@ -300,12 +300,18 @@ export default function RestaurantScreen({ navigation }: Props) {
                       uri: l.restaurantImage,
                     }}
                   />
-                  <Text style={{ marginTop: 5, marginBottom: 5 }}>
+
+                  {locationPermissionStatus == Location.PermissionStatus.GRANTED &&
+                    
+                    <Text style={{ marginTop: 5, marginBottom: 5 }}>
                     {l.distance >= 1000
                       ? parseInt(l.distance) / 1000
                       : parseInt(l.distance)}{" "}
                     {l.distance >= 1000 ? "km" : "m"}
                   </Text>
+                    
+                  }
+                  
                   <Button
                     color="#E85D04"
                     icon={
