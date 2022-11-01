@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { StreamChat, Channel as ChannelType } from "stream-chat";
 import {
@@ -13,10 +12,6 @@ import {
   OverlayProvider,
   Thread,
 } from "stream-chat-expo";
-import { Group } from "../../api/Group";
-import { getUserInfo } from "../../api/User";
-// import Card from "../components/Card";
-import ChatScreen from "./ChatScreen";
 import { RootState } from "../redux/store";
 
 const client = StreamChat.getInstance("vsw2j53wvgv6");
