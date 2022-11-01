@@ -28,7 +28,11 @@ export default function MyGroupsScreen() {
   const { user_id, username, StreamToken, user_photo } = useSelector(
     (state: RootState) => state.user
   );
-
+  const filters = {
+    members: {
+      $in: [user_id],
+    },
+  };
   // @ts-ignore
   useEffect(() => {
     const setupClient = async () => {
@@ -96,7 +100,11 @@ export default function MyGroupsScreen() {
               )}
             </Channel>
           ) : (
-            <ChannelList onSelect={setChannel} />
+            <ChannelList
+              filters={filters}
+              sort={{ last_message_at: -1 }}
+              onSelect={setChannel}
+            />
           )}
         </Chat>
       </View>
