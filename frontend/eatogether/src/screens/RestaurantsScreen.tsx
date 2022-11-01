@@ -18,12 +18,13 @@ import { ListItem, Avatar } from "@rneui/themed";
 import { ButtonGroup } from "@rneui/themed";
 import * as Location from "expo-location";
 import { AirbnbRating } from "@rneui/themed";
+import { StackScreenProps } from "@react-navigation/stack";
 
 const BASE_URI = "https://api.eatogether.site/restaurants";
 
 var Position: { latitude: any; longitude: any };
 
-type Props = BottomTabScreenProps<RootNavParamList, "Restaurants">;
+type Props = StackScreenProps<RootNavParamList, "RestaurantsList">;
 
 export default function RestaurantScreen({ navigation }: Props) {
   const [isLoading, setLoading] = useState(true);
@@ -258,7 +259,9 @@ export default function RestaurantScreen({ navigation }: Props) {
                     }}
                     title="View Info"
                     onPress={() => {
-                      navigation.navigate("My Groups", { restaurantID: 1 });
+                      navigation.navigate("RestaurantProfile", {
+                        restaurantID: "3",
+                      });
                     }}
                   />
                 </Card>
