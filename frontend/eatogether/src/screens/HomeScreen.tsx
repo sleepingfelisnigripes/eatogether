@@ -172,6 +172,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
             <Marker
               coordinate={marker.latlng}
               onPress={() => {
+                setFollowMe(false);
                 const newPosition = {
                   center: {
                     latitude: marker.latlng.latitude,
