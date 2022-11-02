@@ -21,11 +21,15 @@ import {
   Icon,
   Input,
 } from "@rneui/themed";
-import { getRestaurantInfo, Restaurant, setFavouriteRestaurant } from "../../api/Restaurant";
+import {
+  getRestaurantInfo,
+  Restaurant,
+  setFavouriteRestaurant,
+} from "../../api/Restaurant";
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
-import { Group, createGroup, joinGroup } from '../../api/Group';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Group, createGroup, joinGroup } from "../../api/Group";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Review, postReview } from "../../api/Review";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -36,6 +40,7 @@ import {
 import { ServerResponse } from "../../api/Common";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { getUserInfo } from "../../api/User";
 
 type Props = StackScreenProps<RootNavParamList, "RestaurantProfile">;
 export default function RestaurantProfileScreen({ navigation, route }: Props) {
@@ -56,12 +61,19 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       setRestaurant(restaurant);
       setReviews(restaurant.reviews);
       setGroups(restaurant.upcomingGroups);
+
+      const { favouriteRestaurants } = await getUserInfo(user_id);
+      const index = favouriteRestaurants!.findIndex(
+        (restaurant) => restaurant.restaurantID === restaurantID
+      );
+      if (index > -1) {
+        setLike(true);
+      }
     }
     getData();
   }, []);
 
-
-  async function updateRestaurant(){
+  async function updateRestaurant() {
     const restaurant = await getRestaurantInfo(restaurantID);
     setRestaurant(restaurant);
     setReviews(restaurant.reviews);
@@ -161,35 +173,31 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     }
   };
 
-  const handleJoinGroup = async (groupID:string) => {
-    try{
-        console.log("Joining process starting")
-        const response : ServerResponse = await joinGroup(
-            ETToken,
-            groupID
-        );
-        console.log("got response")
-        if (response.status === "success") {
-            updateRestaurant();
-            console.log("Join Group successfully");
-          } else {
-            //Hide Loader
-            setErrorText(response.message ?? "Unknown error occurred");
-            console.log(errorText);
-          }
+  const handleJoinGroup = async (groupID: string) => {
+    try {
+      console.log("Joining process starting");
+      const response: ServerResponse = await joinGroup(ETToken, groupID);
+      console.log("got response");
+      if (response.status === "success") {
+        updateRestaurant();
+        console.log("Join Group successfully");
+      } else {
+        //Hide Loader
+        setErrorText(response.message ?? "Unknown error occurred");
+        console.log(errorText);
+      }
     } catch (error) {
-        if (error instanceof Error) {
-          setErrorText(error.message ?? "Unknown error occurred");
-          console.log(error);
-        }
+      if (error instanceof Error) {
+        setErrorText(error.message ?? "Unknown error occurred");
+        console.log(error);
+      }
     }
-
   };
 
   const [addGroupListVisible, setAddGroupListVisible] = useState(false);
   const addGroupList = [
     {
-        title : "Select Group Time"
+      title: "Select Group Time",
     },
     // {
     //     content: (
@@ -197,31 +205,29 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     //     )
     // },
     {
-        content: (
-            <Input
-              placeholder="Maximum People"
-              containerStyle={{ marginTop: -30, marginLeft: -10 }}
-              onChangeText={(maxNumString) => {
-                var maxNum = 0;
-                try{
-                    maxNum = parseInt(maxNumString);
-                }catch (error) {
-                    console.log("Please type in number")
-                }  
-                setGroupMemberNum(maxNum);
-                }}
-            ></Input>
-          ),
+      content: (
+        <Input
+          placeholder="Maximum People"
+          containerStyle={{ marginTop: -30, marginLeft: -10 }}
+          onChangeText={(maxNumString) => {
+            var maxNum = 0;
+            try {
+              maxNum = parseInt(maxNumString);
+            } catch (error) {
+              console.log("Please type in number");
+            }
+            setGroupMemberNum(maxNum);
+          }}
+        ></Input>
+      ),
     },
     {
-        title: "Cancel",
-        containerStyle: { backgroundColor: "#6A040F" },
-        titleStyle: { color: "white" },
-        onPress: () => setAddGroupListVisible(false),
+      title: "Cancel",
+      containerStyle: { backgroundColor: "#6A040F" },
+      titleStyle: { color: "white" },
+      onPress: () => setAddGroupListVisible(false),
     },
   ];
-
-
 
   const [isVisible, setIsVisible] = useState(false);
   //const [submitReview,setSubmitReview] = useState(false);
@@ -358,20 +364,22 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
               <View style={{ flex: 1, alignItems: "flex-start" }}>
                 {like ? (
                   <Icon
-                    name="heart-o"
-                    type="font-awesome"
-                    color="#DC2F02"
-                    onPress={() => {
-                      setLike(false);
-                    }}
-                  />
-                ) : (
-                  <Icon
                     name="heart"
                     type="font-awesome"
                     color="#DC2F02"
                     onPress={() => {
+                      setLike(false);
+                      setFavouriteRestaurant(ETToken, restaurantID, false);
+                    }}
+                  />
+                ) : (
+                  <Icon
+                    name="heart-o"
+                    type="font-awesome"
+                    color="#DC2F02"
+                    onPress={() => {
                       setLike(true);
+                      setFavouriteRestaurant(ETToken, restaurantID, true);
                     }}
                   />
                 )}
@@ -518,7 +526,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
               </ScrollView>
             </TabView.Item>
             <TabView.Item style={{ backgroundColor: "white", width: "100%" }}>
-            <ScrollView>
+              <ScrollView>
                 <View>
                   <Button
                     title="Create Group"
@@ -558,27 +566,29 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                     >
                       <View
                         style={{
-                          flex: 5
+                          flex: 5,
                         }}
                       >
+                        <Text> Group Id: {group.groupID}</Text>
                         <Text>
-                            {" "}
-                            Group Id: {group.groupID}
+                          {" "}
+                          Meeting on {group.timestamp.split("T")[0]}{" "}
+                          {group.timestamp.split("T")[1].split("+")[0]}
+                          {""}
                         </Text>
                         <Text>
-                            {" "}
-                            Meeting on {group.timestamp.split("T")[0]}{" "}{group.timestamp.split("T")[1].split("+")[0]}{""}
-                        </Text>
-                        <Text>
-                            {" "}
-                            Participants {group.currentParticipants} / {group.maxParticipants}
+                          {" "}
+                          Participants {group.currentParticipants} /{" "}
+                          {group.maxParticipants}
                         </Text>
                       </View>
-                      <View style={{ flex: 2, justifyContent:"center" }}>
+                      <View style={{ flex: 2, justifyContent: "center" }}>
                         <Button
-                        title="Join"
-                        onPress={() => {handleJoinGroup(group.groupID)}}
-                        buttonStyle={styles.button}
+                          title="Join"
+                          onPress={() => {
+                            handleJoinGroup(group.groupID);
+                          }}
+                          buttonStyle={styles.button}
                         />
                       </View>
                     </View>

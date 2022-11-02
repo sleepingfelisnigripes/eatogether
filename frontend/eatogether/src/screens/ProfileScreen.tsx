@@ -30,6 +30,13 @@ export default function ProfileScreen({ navigation }: any) {
       // The screen is focused
       //console.log("Profile Screen is focused");
       // Call any action
+      (async () => {
+        const userInfo = await getUserInfo(user_id);
+        //const userInfo = await getUserInfo(user_id);
+        setUser(userInfo);
+        setResaurants(userInfo?.favouriteRestaurants ?? []);
+        //console.log(userInfo?.favouriteRestaurants??[]);
+      })();
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
@@ -39,13 +46,13 @@ export default function ProfileScreen({ navigation }: any) {
   const { user_id } = useSelector((state: ReduxRootState) => state.user);
 
   useEffect(() => {
-    (async () => {
-      const userInfo = await getUserInfo(user_id);
-      //const userInfo = await getUserInfo(user_id);
-      setUser(userInfo);
-      setResaurants(userInfo?.favouriteRestaurants ?? []);
-      //console.log(userInfo?.favouriteRestaurants??[]);
-    })();
+    // (async () => {
+    //   const userInfo = await getUserInfo(user_id);
+    //   //const userInfo = await getUserInfo(user_id);
+    //   setUser(userInfo);
+    //   setResaurants(userInfo?.favouriteRestaurants ?? []);
+    //   //console.log(userInfo?.favouriteRestaurants??[]);
+    // })();
   }, []);
 
   async function handleLogout(): Promise<void> {
