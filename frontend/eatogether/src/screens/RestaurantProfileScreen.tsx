@@ -308,15 +308,15 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
             containerStyle={{ backgroundColor: "#E85D04" }}
             value={index}
             onChange={(e) => setIndex(e)}
-            indicatorStyle={{
-              backgroundColor: "white",
-              height: 0,
-            }}
+            disableIndicator
             variant="primary"
           >
             <Tab.Item
               title="About"
               titleStyle={{ fontSize: 12 }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
               icon={{
                 name: "information-circle-outline",
                 type: "ionicon",
@@ -326,11 +326,17 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
             <Tab.Item
               title="Reviews"
               titleStyle={{ fontSize: 12 }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
               icon={{ name: "pencil-outline", type: "ionicon", color: "white" }}
             />
             <Tab.Item
               title="Groups"
               titleStyle={{ fontSize: 12 }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
               icon={{ name: "people-outline", type: "ionicon", color: "white" }}
             />
           </Tab>
