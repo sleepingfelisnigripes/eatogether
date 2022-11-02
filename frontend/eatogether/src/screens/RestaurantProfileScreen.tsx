@@ -8,6 +8,8 @@ import { getRestaurantInfo, Restaurant } from '../../api/Restaurant';
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
 import { Review, postReview } from '../../api/Review';
+import { Group, createGroup } from '../../api/Group';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from "expo-image-picker";
 import {
     manipulateAsync,
@@ -25,16 +27,24 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     // Get the user ID
     const { user_id, ETToken} = useSelector((state: ReduxRootState) => state.user);
 
-    // Get the restaurant object and reviews
+    // Get the restaurant object, reviews and groups
     const [restaurant, setRestaurant] = useState<Restaurant>();
     const [reviews, setReviews] = useState<Review[]>();
+    const [groups, setGroups] = useState<Group[]>();
     useEffect(()=>{
         async function getData() {
             const restaurant= await getRestaurantInfo(restaurantID);
             setRestaurant(restaurant);
             setReviews(restaurant.reviews);
+            setGroups(restaurant.upcomingGroups);
         }
         getData();},[])
+
+    async function updateRestaurant(){
+        const restaurant= await getRestaurantInfo(restaurantID);
+        setRestaurant(restaurant);
+        setReviews(restaurant.reviews);
+    }
 
     const [errorText, setErrorText] = useState("");
 
@@ -112,14 +122,15 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
             if (response.status === "success") {
                 setIsVisible(false);
                 console.log("Review Published successfully");
+                updateRestaurant();
               } else {
-                //Hide Loader
                 setIsVisible(false);
                 setErrorText(response.message ?? "Unknown error occurred");
                 console.log(errorText);
             }
         }catch(error){
             if (error instanceof Error) {
+                setIsVisible(false);
                 setErrorText(error.message ?? "Unknown error occurred");
                 console.log(error)
             }
@@ -205,6 +216,17 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
         onPress: () => setIsVisible(false),
     },
     ];
+
+    const addGroupList = [
+    {
+        title: 'Set Grouping Time!'
+    },
+    {
+        title: 'Set Maximum People'
+    }
+    ];
+
+
 
     return (
         <SafeAreaProvider>
