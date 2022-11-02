@@ -139,6 +139,7 @@ export default function ProfileScreen({ navigation }: any) {
                     params: {
                       restaurantID: item.restaurantID,
                     },
+                    initial: false,
                   });
                 }}
               >
