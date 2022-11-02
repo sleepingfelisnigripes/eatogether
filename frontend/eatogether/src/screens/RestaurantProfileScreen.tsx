@@ -85,6 +85,8 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
   // set the phote in the review
   const [reviewImage, setReviewImage] = useState<ImageResult | null>(null);
 
+  const [groupMemberNum, setGroupMemberNum] = useState<number | null>(6);
+
   const handleChoosePhoto = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -187,10 +189,36 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
   const [addGroupListVisible, setAddGroupListVisible] = useState(false);
   const addGroupList = [
     {
-        title : "Select Group Time",
+        title : "Select Group Time"
+    },
+    // {
+    //     content: (
+    //         <DateTimePicker></DateTimePicker>
+    //     )
+    // },
+    {
+        content: (
+            <Input
+              placeholder="Maximum People"
+              containerStyle={{ marginTop: -30, marginLeft: -10 }}
+              onChangeText={(maxNumString) => {
+                var maxNum = 0;
+                try{
+                    maxNum = parseInt(maxNumString);
+                }catch (error) {
+                    console.log("Please type in number")
+                }  
+                setGroupMemberNum(maxNum);
+                }}
+            ></Input>
+          ),
     },
     {
-    }
+        title: "Cancel",
+        containerStyle: { backgroundColor: "#6A040F" },
+        titleStyle: { color: "white" },
+        onPress: () => setAddGroupListVisible(false),
+    },
   ];
 
 
@@ -332,7 +360,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                   <Icon
                     name="heart-o"
                     type="font-awesome"
-                    color="#517fa4"
+                    color="#DC2F02"
                     onPress={() => {
                       setLike(false);
                     }}
@@ -341,7 +369,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                   <Icon
                     name="heart"
                     type="font-awesome"
-                    color="#517fa4"
+                    color="#DC2F02"
                     onPress={() => {
                       setLike(true);
                     }}
@@ -498,7 +526,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                     buttonStyle={styles.button}
                   />
                   {/*//@ts-ignore*/}
-                  {/* <BottomSheet modalProps={{}} isVisible={isVisible}>
+                  <BottomSheet modalProps={{}} isVisible={addGroupListVisible}>
                     {addGroupList.map((l, i) => (
                       <ListItem
                         key={i}
@@ -513,7 +541,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                         </ListItem.Content>
                       </ListItem>
                     ))}
-                  </BottomSheet> */}
+                  </BottomSheet>
                 </View>
 
                 {/* Display all the groups */}
