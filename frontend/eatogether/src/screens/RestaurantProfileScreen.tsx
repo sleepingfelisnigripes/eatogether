@@ -215,7 +215,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     },
     {
       title: "Submit Review",
-      containerStyle: { backgroundColor: "blue" },
+      containerStyle: { backgroundColor: "#D00000" },
       titleStyle: { color: "white" },
       onPress: () => {
         handleSubmitReview();
@@ -223,7 +223,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     },
     {
       title: "Cancel",
-      containerStyle: { backgroundColor: "red" },
+      containerStyle: { backgroundColor: "#6A040F" },
       titleStyle: { color: "white" },
       onPress: () => setIsVisible(false),
     },
@@ -456,6 +456,7 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 10,
+    backgroundColor: "#DC2F02",
   },
   head_image: {},
   viewContainer: {
