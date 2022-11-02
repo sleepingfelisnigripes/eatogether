@@ -28,13 +28,8 @@ import {
 } from "../../api/Restaurant";
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
-<<<<<<< HEAD
 import { Group, createGroup, joinGroup } from '../../api/Group';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-=======
-import { Group, createGroup, joinGroup } from "../../api/Group";
-import DateTimePicker from "@react-native-community/datetimepicker";
->>>>>>> fc25b36361b6f8872b6047e26d6f7d3a5aad5734
 import { Review, postReview } from "../../api/Review";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -45,12 +40,9 @@ import {
 import { ServerResponse } from "../../api/Common";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
-<<<<<<< HEAD
 import { Time } from "stream-chat-expo";
 import moment from "moment";
-=======
 import { getUserInfo } from "../../api/User";
->>>>>>> fc25b36361b6f8872b6047e26d6f7d3a5aad5734
 
 type Props = StackScreenProps<RootNavParamList, "RestaurantProfile">;
 export default function RestaurantProfileScreen({ navigation, route }: Props) {
@@ -269,7 +261,6 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       ),
     },
     {
-<<<<<<< HEAD
         title: "Create",
         containerStyle: { backgroundColor: "#6A040F" },
         titleStyle: { color: "white" },
@@ -280,12 +271,6 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
         containerStyle: { backgroundColor: "#6A040F" },
         titleStyle: { color: "white" },
         onPress: () => setAddGroupListVisible(false),
-=======
-      title: "Cancel",
-      containerStyle: { backgroundColor: "#6A040F" },
-      titleStyle: { color: "white" },
-      onPress: () => setAddGroupListVisible(false),
->>>>>>> fc25b36361b6f8872b6047e26d6f7d3a5aad5734
     },
   ];
 
