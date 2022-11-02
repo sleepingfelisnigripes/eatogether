@@ -305,30 +305,33 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
 
         <View style={{ flex: 5 }}>
           <Tab
-            containerStyle={{ backgroundColor: "green" }}
-            //buttonStyle = {{backgroundColor:'red'}}
+            containerStyle={{ backgroundColor: "#E85D04" }}
             value={index}
             onChange={(e) => setIndex(e)}
             indicatorStyle={{
               backgroundColor: "white",
-              height: 3,
+              height: 0,
             }}
             variant="primary"
           >
             <Tab.Item
               title="About"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "timer", type: "ionicon", color: "white" }}
+              icon={{
+                name: "information-circle-outline",
+                type: "ionicon",
+                color: "white",
+              }}
             />
             <Tab.Item
-              title="Review"
+              title="Reviews"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "heart", type: "ionicon", color: "white" }}
+              icon={{ name: "pencil-outline", type: "ionicon", color: "white" }}
             />
             <Tab.Item
               title="Groups"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "cart", type: "ionicon", color: "white" }}
+              icon={{ name: "people-outline", type: "ionicon", color: "white" }}
             />
           </Tab>
 
