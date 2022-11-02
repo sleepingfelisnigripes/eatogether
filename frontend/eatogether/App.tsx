@@ -35,7 +35,7 @@ export type RootNavParamList = {
   Auth: undefined;
   TabNavigationRoutes: undefined;
   RestaurantProfile: { restaurantID: string };
-  Restaurants: undefined;
+  Restaurants: {};
 };
 
 const Tab = createBottomTabNavigator<RootNavParamList>();
