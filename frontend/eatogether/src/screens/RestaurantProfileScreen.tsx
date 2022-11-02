@@ -264,7 +264,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     },
     {
       title: "Submit Review",
-      containerStyle: { backgroundColor: "blue" },
+      containerStyle: { backgroundColor: "#D00000" },
       titleStyle: { color: "white" },
       onPress: () => {
         handleSubmitReview();
@@ -272,7 +272,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     },
     {
       title: "Cancel",
-      containerStyle: { backgroundColor: "red" },
+      containerStyle: { backgroundColor: "#6A040F" },
       titleStyle: { color: "white" },
       onPress: () => setIsVisible(false),
     },
@@ -354,39 +354,55 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
 
         <View style={{ flex: 5 }}>
           <Tab
-            containerStyle={{ backgroundColor: "green" }}
-            //buttonStyle = {{backgroundColor:'red'}}
+            containerStyle={{ backgroundColor: "#E85D04" }}
             value={index}
             onChange={(e) => setIndex(e)}
-            indicatorStyle={{
-              backgroundColor: "white",
-              height: 3,
-            }}
+            disableIndicator
             variant="primary"
           >
             <Tab.Item
               title="About"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "timer", type: "ionicon", color: "white" }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
+              icon={{
+                name: "information-circle-outline",
+                type: "ionicon",
+                color: "white",
+              }}
             />
             <Tab.Item
-              title="Review"
+              title="Reviews"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "heart", type: "ionicon", color: "white" }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
+              icon={{ name: "pencil-outline", type: "ionicon", color: "white" }}
             />
             <Tab.Item
               title="Groups"
               titleStyle={{ fontSize: 12 }}
-              icon={{ name: "cart", type: "ionicon", color: "white" }}
+              containerStyle={(active) => ({
+                backgroundColor: active ? "#F48C06" : undefined,
+              })}
+              icon={{ name: "people-outline", type: "ionicon", color: "white" }}
             />
           </Tab>
 
           <TabView value={index} onChange={setIndex} animationType="spring">
             <TabView.Item style={{ backgroundColor: "white", width: "100%" }}>
               <View>
-                <Text>Address : {restaurant?.address}</Text>
-                <Text>Opening Hours: {restaurant?.openingHours}</Text>
-                <Text>Cuisine Type: {restaurant?.cuisineType}</Text>
+                <Text style={styles.infoHeading}>📍 Address</Text>
+                <Text style={styles.infoContent}>{restaurant?.address}</Text>
+                <Text style={styles.infoHeading}>🕘 Opening Hours</Text>
+                <Text style={styles.infoContent}>
+                  {restaurant?.openingHours}
+                </Text>
+                <Text style={styles.infoHeading}>🥘 Cuisine Type</Text>
+                <Text style={styles.infoContent}>
+                  {restaurant?.cuisineType}
+                </Text>
               </View>
             </TabView.Item>
             <TabView.Item style={{ backgroundColor: "white", width: "100%" }}>
@@ -560,6 +576,7 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 10,
+    backgroundColor: "#DC2F02",
   },
   head_image: {},
   viewContainer: {
@@ -658,5 +675,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     padding: 30,
+  },
+  infoHeading: {
+    fontSize: 24,
+    marginStart: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    fontWeight: "bold",
+  },
+  infoContent: {
+    fontSize: 20,
+    marginBottom: 20,
+    marginStart: 10,
   },
 });
