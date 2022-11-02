@@ -29,7 +29,8 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "FOREGROUND_SERVICE",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET"
       ],
       "package": "site.eatogether"
     },
@@ -40,8 +41,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The Eatogether accesses your photos to let you share them with your friends.",
-          "cameraPermission": "The Eatogether to access your camera."
+          "photosPermission": "Let Eatogether access your photos to let you share them with your friends.",
+          "cameraPermission": "Let Eatogether access your camera."
         }
       ]
     ],
