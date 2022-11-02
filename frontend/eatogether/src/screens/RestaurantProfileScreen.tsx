@@ -335,9 +335,16 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
           <TabView value={index} onChange={setIndex} animationType="spring">
             <TabView.Item style={{ backgroundColor: "white", width: "100%" }}>
               <View>
-                <Text>Address : {restaurant?.address}</Text>
-                <Text>Opening Hours: {restaurant?.openingHours}</Text>
-                <Text>Cuisine Type: {restaurant?.cuisineType}</Text>
+                <Text style={styles.infoHeading}>📍 Address</Text>
+                <Text style={styles.infoContent}>{restaurant?.address}</Text>
+                <Text style={styles.infoHeading}>🕘 Opening Hours</Text>
+                <Text style={styles.infoContent}>
+                  {restaurant?.openingHours}
+                </Text>
+                <Text style={styles.infoHeading}>🥘 Cuisine Type</Text>
+                <Text style={styles.infoContent}>
+                  {restaurant?.cuisineType}
+                </Text>
               </View>
             </TabView.Item>
             <TabView.Item style={{ backgroundColor: "white", width: "100%" }}>
@@ -544,5 +551,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     padding: 30,
+  },
+  infoHeading: {
+    fontSize: 24,
+    marginStart: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    fontWeight: "bold",
+  },
+  infoContent: {
+    fontSize: 20,
+    marginBottom: 20,
+    marginStart: 10,
   },
 });
