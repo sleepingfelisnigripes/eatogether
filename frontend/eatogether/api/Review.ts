@@ -56,6 +56,7 @@ export async function postReview(
       headers: {
         //Header Defination
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${ETToken}`,
       },
     });
     const serverResponse: ServerResponse = await response.json();
