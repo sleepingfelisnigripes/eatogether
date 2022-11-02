@@ -1,6 +1,14 @@
 import { useEffect, useState, useRef } from "react";
-import { Linking, StyleSheet, Text, View, Image } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import {
+  Linking,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableHighlight,
+  TouchableOpacity,
+} from "react-native";
+import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { Button } from "@rneui/themed";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -10,6 +18,7 @@ import { RootState as ReduxRootState } from "../redux/store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllRestaurants, Restaurant } from "../../api/Restaurant";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type Props = BottomTabScreenProps<RootNavParamList, "Home">;
 
@@ -42,19 +51,19 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
 
   // Get user's permission for location service once the screen is launched
   useEffect(() => {
-    // (async () => {
-    //   await checkLocationPermission();
-    //   if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
-    //     return;
-    //   }
-    //   await updateUserPosition();
-    //   try {
-    //     const restaurants = await getAllRestaurants();
-    //     setRestaurants(restaurants);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // })();
+    (async () => {
+      await checkLocationPermission();
+      if (locationPermissionStatus !== Location.PermissionStatus.GRANTED) {
+        return;
+      }
+      await updateUserPosition();
+      try {
+        const restaurants = await getAllRestaurants();
+        setRestaurants(restaurants);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -140,7 +149,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   }, [followMe]);
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.bannerContainer}>
         <Text style={styles.greetings}>
           {greetings + ", "}
@@ -158,25 +167,76 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
         showsPointsOfInterest={false}
         pitchEnabled={false}
       >
-        {restaurants.map((marker, index) => (
-          <Marker
-            key={index}
-            coordinate={marker.latlng}
-            title={marker.restaurantName}
-            description={
-              marker.cuisineType +
-              "\n" +
-              `${
-                marker.noOfGroupsToday > 0 ? marker.noOfGroupsToday : "No"
-              } upcoming group${marker.noOfGroupsToday > 1 ? "s" : ""}`
-            }
-          >
-            <Image
-              source={{ uri: marker.restaurantImage }}
-              style={{ width: 65, height: 65, borderRadius: 50 }}
-            ></Image>
-          </Marker>
-        ))}
+        {restaurants.length > 0 &&
+          restaurants.map((marker) => (
+            <Marker
+              coordinate={marker.latlng}
+              onPress={() => {
+                setFollowMe(false);
+                const newPosition = {
+                  center: {
+                    latitude: marker.latlng.latitude,
+                    longitude: marker.latlng.longitude,
+                  },
+                  zoom: 17,
+                };
+
+                mapViewRef.current?.animateCamera(newPosition, {
+                  duration: 300,
+                });
+              }}
+              key={`marker-${marker.restaurantID}`}
+            >
+              <Image
+                source={{ uri: marker.restaurantImage }}
+                style={{
+                  width: 65,
+                  height: 65,
+                  borderRadius: 50,
+                  resizeMode: "cover",
+                }}
+              ></Image>
+              <Callout
+                tooltip
+                style={styles.callout}
+                onPress={() => {
+                  navigation.navigate("Restaurants", {
+                    screen: "RestaurantProfile",
+                    params: {
+                      restaurantID: marker.restaurantID,
+                    },
+                    initial: false,
+                  });
+                }}
+              >
+                <View style={styles.calloutContainer}>
+                  <View style={styles.bubble}>
+                    <View style={styles.bubbleContent}>
+                      <Text
+                        style={styles.calloutHeaderText}
+                        numberOfLines={2}
+                        ellipsizeMode={"tail"}
+                      >
+                        {marker.restaurantName}
+                      </Text>
+                      <Text>{marker.cuisineType}</Text>
+                      <Text>
+                        {marker.noOfGroupsToday > 0
+                          ? marker.noOfGroupsToday
+                          : "No"}{" "}
+                        upcoming group{marker.noOfGroupsToday > 1 ? "s" : ""}
+                      </Text>
+                      <Text style={styles.calloutDescriptionText}>
+                        Tap here to see more details
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.arrowBorder} />
+                  <View style={styles.arrow} />
+                </View>
+              </Callout>
+            </Marker>
+          ))}
       </MapView>
       {locationPermissionStatus === Location.PermissionStatus.GRANTED ? (
         <>
@@ -216,7 +276,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
           />
         </>
       )}
-    </>
+    </GestureHandlerRootView>
   );
 }
 
@@ -251,5 +311,51 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: 5,
+  },
+  callout: {
+    width: 300,
+    height: 200,
+  },
+  calloutContainer: {
+    flexDirection: "column",
+    alignSelf: "flex-start",
+  },
+  calloutHeaderText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  calloutDescriptionText: {
+    color: "grey",
+  },
+  bubble: {
+    width: 300,
+    flexDirection: "row",
+    alignSelf: "center",
+    backgroundColor: "white",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 6,
+    borderColor: "white",
+    borderWidth: 0.5,
+    marginTop: 32,
+  },
+  bubbleContent: {
+    flex: 1,
+  },
+  arrow: {
+    backgroundColor: "transparent",
+    borderWidth: 16,
+    borderColor: "transparent",
+    borderTopColor: "white",
+    alignSelf: "center",
+    marginTop: -32,
+  },
+  arrowBorder: {
+    backgroundColor: "transparent",
+    borderWidth: 16,
+    borderColor: "transparent",
+    borderTopColor: "white",
+    alignSelf: "center",
+    marginTop: -0.5,
   },
 });
