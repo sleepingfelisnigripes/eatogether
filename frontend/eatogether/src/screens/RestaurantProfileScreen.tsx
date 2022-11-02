@@ -1,13 +1,20 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootNavParamList } from "../../App";
 import React ,{ useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Platform, ScrollView, TouchableOpacity, TextInputComponent } from 'react-native';
 import { AirbnbRating } from '@rneui/themed';
-import { Tab,  TabView, Image, BottomSheet, Button, ListItem, Icon } from '@rneui/themed';
+import { Tab,  TabView, Image, BottomSheet, Button, ListItem, Icon, Input } from '@rneui/themed';
 import { getRestaurantInfo, Restaurant } from '../../api/Restaurant';
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
-import { Review } from '../../api/Review';
+import { Review, postReview } from '../../api/Review';
+import * as ImagePicker from "expo-image-picker";
+import {
+    manipulateAsync,
+    SaveFormat,
+    ImageResult,
+  } from "expo-image-manipulator";
+import { ServerResponse } from "../../api/Common";
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -16,7 +23,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
     // Get the restaurant ID
     const restaurantID = route.params.restaurantID;
     // Get the user ID
-    const { user_id } = useSelector((state: ReduxRootState) => state.user);
+    const { user_id, ETToken} = useSelector((state: ReduxRootState) => state.user);
 
     // Get the restaurant object and reviews
     const [restaurant, setRestaurant] = useState<Restaurant>();
@@ -27,33 +34,169 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
             setRestaurant(restaurant);
             setReviews(restaurant.reviews);
         }
-        getData(); 
-    },[])
+        getData();},[])
 
+    const [errorText, setErrorText] = useState("");
 
-    type RatingsComponentProps = {};
-
-    const ratingCompleted = (rating: number) => {
-    console.log('Rating is: ' + rating);
-    };
-
-    const ratingProps = {};
-
+    // the index of the tab subpage
     const [index, setIndex] = React.useState(0);
 
+    // whether the restaurant is in the user's favourate list
     const [like, setLike] = React.useState(false);
+
+    // set the rating in the review
+    const [rating, setRating] = React.useState(3);
+
+    // set the review text
+    const [reviewText, setReviewText] = useState<string | null>("");
+
+    // set the phote in the review
+    const [reviewImage, setReviewImage] = useState<ImageResult | null>(null);
+
+    const handleChoosePhoto = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+    
+        if (!result.cancelled) { 
+          const manipResult = await manipulateAsync(
+            result.uri,
+            [{ resize: { width: 150 } }],
+            { compress: 0.7, format: SaveFormat.JPEG }
+          );
+          setReviewImage(manipResult);
+        }
+    };
+    
+    const openCamera = async () => {
+        // Ask the user for the permission to access the camera
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+        if (permissionResult.granted === false) {
+            alert("Please allow permission to use camera in order to take a photo.");
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync();
+
+        if (!result.cancelled) {
+            const manipResult = await manipulateAsync(
+            result.uri,
+            [{ resize: { width: 150 } }],
+            { compress: 0.7, format: SaveFormat.JPEG }
+            );
+            setReviewImage(manipResult);
+        }
+    };
+
+    const handleSubmitReview = async ()=>{
+        setErrorText("");
+        if(!reviewText){
+            setErrorText("Please type in review text!");
+            console.log(errorText);
+            return;
+        }
+        
+        try{
+            const response: ServerResponse = await postReview(
+                ETToken,
+                restaurantID,
+                rating,
+                reviewText,
+                reviewImage
+            );
+            if (response.status === "success") {
+                setIsVisible(false);
+                console.log("Review Published successfully");
+              } else {
+                //Hide Loader
+                setIsVisible(false);
+                setErrorText(response.message ?? "Unknown error occurred");
+                console.log(errorText);
+            }
+        }catch(error){
+            if (error instanceof Error) {
+                setErrorText(error.message ?? "Unknown error occurred");
+                console.log(error)
+            }
+        }
+    
+    }
 
 
     const [isVisible, setIsVisible] = useState(false);
-    const [submitReview,setSubmitReview] = useState(false);
+    //const [submitReview,setSubmitReview] = useState(false);
     const addReviewList = [
-    { title: 'List Item 1' },
-    { title: 'List Item 2' },
-    { title: 'Submit Review',
+    { title: 'Rating' ,
+      containerStyle : {marginBottom: -20},
+      content: (<AirbnbRating 
+      showRating = {false}
+      defaultRating = {3.0}
+      size = {20}
+      starContainerStyle = {{marginLeft:-5}}
+      onFinishRating = {value=>{setRating(value)}
+      }
+     />)
+    },
+    {
+        content: (
+        <Input 
+        placeholder="Review Text" 
+        containerStyle = {{marginTop:-30, marginLeft:-10}}
+        onChangeText = {reviewInput =>{setReviewText(reviewInput)}}
+        >
+        </Input>
+        ),
+        
+    },
+    { title: 'Photo',
+      containerStyle: {marginTop:-50, backgroundColor:'white'},
+      content:(
+        
+        reviewImage == null ? (
+            <>
+              <TouchableOpacity
+                style={styles.photoButtonStyle}
+                activeOpacity={0.5}
+                onPress={handleChoosePhoto}
+              >
+                <Text style={styles.buttonTextStyle}>Choose Photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.photoButtonStyle}
+                activeOpacity={0.5}
+                onPress={openCamera}
+              >
+                <Text style={styles.buttonTextStyle}>Take a photo</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+            <Image
+                source={{ uri: reviewImage.uri }}
+                containerStyle = {{alignSelf:"center"}}
+                style={{ width: 150, height: 150 }}
+            />
+            <TouchableOpacity
+              style={styles.photoButtonStyle}
+              activeOpacity={0.5}
+              onPress={() => setReviewImage(null)}
+            >
+              <Text style={styles.buttonTextStyle}>Remove photo</Text>
+            </TouchableOpacity>
+            </>
+          ) 
+      )
+    },
+    { 
+        title: 'Submit Review',
         containerStyle: { backgroundColor: 'blue' },
         titleStyle: { color: 'white' },
-        onPress: () => {setSubmitReview(true), setIsVisible(false)}
-
+        onPress: () => {handleSubmitReview()}
     },
     {
         title: 'Cancel',
@@ -172,31 +315,35 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                         buttonStyle={styles.button}
                         />
                         <BottomSheet modalProps={{}} isVisible={isVisible}>
-                        {addReviewList.map((l, i) => (
-                            <ListItem
-                            key={i}
-                            containerStyle={l.containerStyle}
-                            onPress={l.onPress}
-                            >
-                            <ListItem.Content>
-                                
-                                <ListItem.Title style={l.titleStyle}>
-                                {l.title}
-                                </ListItem.Title>
-                            </ListItem.Content>
-                            </ListItem>
-                        ))}
+                            {addReviewList.map((l, i) => (
+                                <ListItem
+                                key={i}
+                                containerStyle={l.containerStyle}
+                                onPress={l.onPress}
+                                >
+                                <ListItem.Content>
+                                    <ListItem.Title style={l.titleStyle}>
+                                    {l.title}
+                                    </ListItem.Title>
+                                    {l.content}
+                                </ListItem.Content>
+                                </ListItem>
+                            ))}
                         </BottomSheet>
                     </View>
                     
                     {/* Display all the reviews */}
                     {/* for {review} in {reviews}: */}
-                    {reviews?.map(review => (
-                        <View style = {{
+                    {reviews?.map((review,index) => (
+                        <View 
+                        style = {{
                             flexDirection: "row", 
                             borderTopWidth: 10,
                             borderColor: "white"
-                        }} >
+                        }} 
+                        key = {`review${index}`}
+                        >
+
                             <View style = {{
                             flex:1, 
                             alignItems: "center", 
@@ -230,7 +377,6 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                                         style={{width: 80, height: 80}} 
                                     />
                                 </View>
-
                             </View>
                         </View>
                     ))}
@@ -247,14 +393,14 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
         </SafeAreaProvider>
     
         
-        );
+    );
 };
     
 const styles = StyleSheet.create({
 container: {
 flex: 1,
 flexDirection: "column",
-marginTop: 50,
+marginTop: 30,
 },
 head: {
 flex: 1,
@@ -271,6 +417,97 @@ flex: 1,
 },
 rating: {
 paddingVertical: 10,
+},
+Dropdown: {
+marginTop: 20,
+marginLeft: 35,
+marginRight: 35,
+margin: 10,
+height: 40,
+backgroundColor: "transparent",
+borderColor: "#dadae8",
+borderWidth: 1,
+borderRadius: 30,
+padding: 12,
+},
+placeholderStyle: {
+fontSize: 15,
+color: "#dddddd",
+},
+selectedTextStyle: {
+fontSize: 15,
+color: "white",
+},
+SectionStyle: {
+flexDirection: "row",
+height: 40,
+marginTop: 20,
+marginLeft: 35,
+marginRight: 35,
+margin: 10,
+},
+ProfilePhotoSectionStyle: {
+flexDirection: "column",
+// height: 40,
+marginTop: 10,
+marginLeft: 35,
+marginRight: 35,
+marginBottom: 40,
+},
+buttonStyle: {
+backgroundColor: "#DC2F02",
+borderWidth: 0,
+color: "#FFFFFF",
+borderColor: "#7ECC30",
+height: 40,
+width: 200,
+alignSelf: "center",
+alignItems: "center",
+borderRadius: 30,
+marginLeft: 35,
+marginRight: 35,
+marginTop: 20,
+marginBottom: 20,
+},
+photoButtonStyle: {
+backgroundColor: "#DC2F02",
+borderWidth: 0,
+color: "#FFFFFF",
+borderColor: "#5798D8",
+height: 40,
+width: 200,
+alignItems: "center",
+alignSelf: "center",
+borderRadius: 30,
+// marginLeft: 35,
+// marginRight: 35,
+marginTop: 30,
+marginBottom: -10,
+},
+buttonTextStyle: {
+color: "#FFFFFF",
+paddingVertical: 10,
+fontSize: 16,
+},
+inputStyle: {
+flex: 1,
+color: "white",
+paddingLeft: 15,
+paddingRight: 15,
+borderWidth: 1,
+borderRadius: 30,
+borderColor: "#dadae8",
+},
+errorTextStyle: {
+color: "red",
+textAlign: "center",
+fontSize: 18,
+},
+successTextStyle: {
+color: "white",
+textAlign: "center",
+fontSize: 18,
+padding: 30,
 },
 });
 
