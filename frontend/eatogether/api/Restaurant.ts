@@ -106,7 +106,6 @@ export async function setFavouriteRestaurant(
       restaurant_id: restaurantID,
       active: active,
     });
-    console.log(body);
     const response: Response = await fetch(`${API_URL}/restaurant/favourite`, {
       method: "POST",
       headers: {
