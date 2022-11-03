@@ -82,7 +82,7 @@ export default function ProfileScreen({ navigation }: any) {
   } else if (sex == "M") {
     sexIcons = "gender-male";
     sexIconsColor = "#a2d2ff";
-  } else if (sex == "ND") {
+  } else if (sex == "NB") {
     sexIcons = "gender-male-female";
     sexIconsColor = "#cdb4db";
   } else {
