@@ -236,21 +236,23 @@ export default function RestaurantScreen({ navigation }: Props) {
   return (
     <>
       <Loader loading={isLoading} />
-      <Text style={styles.subHeader}> Sort By:</Text>
-      <ButtonGroup
-        buttons={
-          locationPermissionStatus == Location.PermissionStatus.GRANTED
-            ? ["Rating", "Distance"]
-            : ["Rating"]
-        }
-        //innerBorderStyle = {{color: "#E85D04"}}
-        selectedIndex={selectedIndex}
-        onPress={(value) => {
-          setSelectedIndex(value);
-        }}
-        containerStyle={{ backgroundColor: "white" }}
-        selectedButtonStyle={styles.buttonGroup}
-      />
+      <View style={{ backgroundColor: "#FFBA08" }}>
+        <Text style={styles.subHeader}> Sort By:</Text>
+        <ButtonGroup
+          buttons={
+            locationPermissionStatus == Location.PermissionStatus.GRANTED
+              ? ["Rating", "Distance"]
+              : ["Rating"]
+          }
+          //innerBorderStyle = {{color: "#E85D04"}}
+          selectedIndex={selectedIndex}
+          onPress={(value) => {
+            setSelectedIndex(value);
+          }}
+          containerStyle={{ backgroundColor: "white" }}
+          selectedButtonStyle={styles.buttonGroup}
+        />
+      </View>
       <ScrollView>
         <View style={styles.container}>
           {
@@ -363,7 +365,8 @@ const styles = StyleSheet.create({
     textAlign: "left",
     paddingVertical: 5,
     marginTop: 10,
-    marginLeft: 15,
+    marginLeft: 10,
     fontSize: 16,
+    fontWeight: "bold",
   },
 });
