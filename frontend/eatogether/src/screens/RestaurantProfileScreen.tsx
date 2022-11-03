@@ -1,6 +1,6 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootNavParamList } from "../../App";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInputComponent,
+  Alert,
 } from "react-native";
 import { AirbnbRating } from "@rneui/themed";
 import {
@@ -45,6 +46,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Time } from "stream-chat-expo";
 import moment from "moment";
 import { getUserInfo } from "../../api/User";
+import { iteratorSymbol } from "immer/dist/internal";
 
 type Props = StackScreenProps<RootNavParamList, "RestaurantProfile">;
 export default function RestaurantProfileScreen({ navigation, route }: Props) {
@@ -59,6 +61,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [reviews, setReviews] = useState<Review[]>();
   const [groups, setGroups] = useState<Group[]>();
+  const [userUpcomingGroups, setUserUpcomingGroups] = useState<Group[]>([]);
   useEffect(() => {
     async function getData() {
       const restaurant = await getRestaurantInfo(restaurantID);
@@ -66,12 +69,21 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       setReviews(restaurant.reviews);
       setGroups(restaurant.upcomingGroups);
 
-      const { favouriteRestaurants } = await getUserInfo(user_id);
-      const index = favouriteRestaurants!.findIndex(
-        (restaurant) => restaurant.restaurantID === restaurantID
+      const { favouriteRestaurants, upcomingGroups } = await getUserInfo(
+        user_id
       );
-      if (index > -1) {
-        setLike(true);
+
+      if (favouriteRestaurants) {
+        const index = favouriteRestaurants.findIndex(
+          (restaurant) => restaurant.restaurantID === restaurantID
+        );
+        if (index > -1) {
+          setLike(true);
+        }
+      }
+
+      if (upcomingGroups) {
+        setUserUpcomingGroups(upcomingGroups);
       }
     }
     getData();
@@ -188,15 +200,14 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       console.log("got response");
       if (response.status === "success") {
         updateRestaurant();
-        console.log("Join Group successfully");
+        Alert.alert("Joined Group successfully!");
       } else {
-        //Hide Loader
-        setErrorText(response.message ?? "Unknown error occurred");
+        Alert.alert(response.message ?? "Unknown error occurred");
         console.log(errorText);
       }
     } catch (error) {
       if (error instanceof Error) {
-        setErrorText(error.message ?? "Unknown error occurred");
+        Alert.alert(error.message ?? "Unknown error occurred");
         console.log(error);
       }
     }
@@ -650,8 +661,8 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                         <Text> Group Id: {group.groupID}</Text>
                         <Text>
                           {" "}
-                          Meeting on {group.timestamp.split("T")[0]}{" "}
-                          {group.timestamp.split("T")[1].split("+")[0]}
+                          Meeting on{" "}
+                          {moment(group.timestamp).format("YYYY-MM-DD h:mma")}
                           {""}
                         </Text>
                         <Text>
@@ -662,11 +673,36 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                       </View>
                       <View style={{ flex: 2, justifyContent: "center" }}>
                         <Button
-                          title="Join"
+                          title={
+                            group.currentParticipants >= group.maxParticipants
+                              ? "Full"
+                              : group.initUserID == user_id
+                              ? "You are host"
+                              : userUpcomingGroups.findIndex(
+                                  (item) => item.groupID == group.groupID
+                                ) > -1
+                              ? "Joined"
+                              : "Join!"
+                          }
                           onPress={() => {
-                            handleJoinGroup(group.groupID);
+                            if (
+                              userUpcomingGroups.findIndex(
+                                (item) => item.groupID == group.groupID
+                              ) == -1 &&
+                              group.initUserID != user_id &&
+                              group.currentParticipants < group.maxParticipants
+                            )
+                              handleJoinGroup(group.groupID);
                           }}
-                          buttonStyle={styles.button}
+                          buttonStyle={
+                            userUpcomingGroups.findIndex(
+                              (item) => item.groupID == group.groupID
+                            ) > -1 ||
+                            group.initUserID == user_id ||
+                            group.currentParticipants >= group.maxParticipants
+                              ? { ...styles.button, backgroundColor: "grey" }
+                              : styles.button
+                          }
                         />
                       </View>
                     </View>

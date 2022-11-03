@@ -257,13 +257,15 @@ export default function RestaurantScreen({ navigation }: Props) {
             // selectedIndex &&
             (selectedIndex ? dataD : dataR).map((l, i) => (
               //dataR.map((l, i) => (
-              <ListItem key={i}>
+              <ListItem style={{ alignItems: "center" }} key={i}>
                 <Card
                   containerStyle={{
-                    borderTopRightRadius: 20,
-                    borderTopLeftRadius: 20,
-                    borderBottomRightRadius: 20,
-                    borderBottomLeftRadius: 20,
+                    borderRadius: 20,
+                    width: "80%",
+                    marginHorizontal: "10%",
+                  }}
+                  wrapperStyle={{
+                    alignItems: "center",
                   }}
                 >
                   {/* <Text style={{ marginTop: 5, marginRight: 5 }}>
@@ -290,7 +292,7 @@ export default function RestaurantScreen({ navigation }: Props) {
                       {l.distance >= 1000
                         ? parseInt(l.distance) / 1000
                         : parseInt(l.distance)}{" "}
-                      {l.distance >= 1000 ? "km" : "m"}
+                      {l.distance >= 1000 ? "km" : "m"} away
                     </Text>
                   )}
 
@@ -298,7 +300,7 @@ export default function RestaurantScreen({ navigation }: Props) {
                     color="#E85D04"
                     icon={
                       <Icon
-                        name="code"
+                        name="search"
                         color="#ffffff"
                         iconStyle={{ marginRight: 10 }}
                       />
@@ -339,7 +341,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 300,
-    height: 150,
+    height: 200,
+    resizeMode: "cover",
   },
 
   buttonGroup: {
