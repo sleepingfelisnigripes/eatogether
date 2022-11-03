@@ -20,6 +20,7 @@
     "ios": {
       "supportsTablet": true
     },
+    "androidStatusBar": {"barStyle": "light-content","backgroundColor": "#F48C06", "translucent": false},
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
