@@ -29,10 +29,16 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "FOREGROUND_SERVICE",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.INTERNET"
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "INTERNET",
+        "CAMERA"
       ],
-      "package": "site.eatogether"
+      "config":{
+        "googleMaps": {"apiKey": "AIzaSyDN0K6GjKqEzw8FPdsaU80Iz5dOI4M0LZY"}
+      },
+      "package": "site.eatogether.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
