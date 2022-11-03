@@ -19,6 +19,7 @@ import { ButtonGroup } from "@rneui/themed";
 import * as Location from "expo-location";
 import { AirbnbRating, Tab } from "@rneui/themed";
 import { StackScreenProps } from "@react-navigation/stack";
+import Loader from "../components/Loader";
 
 const BASE_URI = "https://api.eatogether.site/restaurants";
 
@@ -234,6 +235,7 @@ export default function RestaurantScreen({ navigation }: Props) {
 
   return (
     <>
+      <Loader loading={isLoading} />
       <Text style={styles.subHeader}> Sort By:</Text>
       <ButtonGroup
         buttons={
