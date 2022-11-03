@@ -28,8 +28,10 @@ import {
 } from "../../api/Restaurant";
 import { useSelector } from "react-redux";
 import { RootState as ReduxRootState } from "../redux/store";
-import { Group, createGroup, joinGroup } from '../../api/Group';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { Group, createGroup, joinGroup } from "../../api/Group";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { Review, postReview } from "../../api/Review";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -73,7 +75,7 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       }
     }
     getData();
-  }, []);
+  }, [restaurantID]);
 
   async function updateRestaurant() {
     const restaurant = await getRestaurantInfo(restaurantID);
@@ -201,47 +203,48 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
   };
 
   const handleCreateGroup = async () => {
-    try{
-        console.log("Creating group process starting")
-        const response : ServerResponse = await createGroup(
-            ETToken,
-            restaurantID,
-            moment(groupTime).format(),
-            groupMemberNum
-        );
-        console.log("got response")
-        if (response.status === "success") {
-            updateRestaurant();
-            console.log("Create Group successfully");
-          } else {
-            //Hide Loader
-            setErrorText(response.message ?? "Unknown error occurred");
-            console.log(errorText);
-          }
+    try {
+      console.log("Creating group process starting");
+      const response: ServerResponse = await createGroup(
+        ETToken,
+        restaurantID,
+        moment(groupTime).format(),
+        groupMemberNum
+      );
+      console.log("got response");
+      if (response.status === "success") {
+        updateRestaurant();
+        console.log("Create Group successfully");
+      } else {
+        //Hide Loader
+        setErrorText(response.message ?? "Unknown error occurred");
+        console.log(errorText);
+      }
     } catch (error) {
-        if (error instanceof Error) {
-          setErrorText(error.message ?? "Unknown error occurred");
-          console.log(error);
-        }
+      if (error instanceof Error) {
+        setErrorText(error.message ?? "Unknown error occurred");
+        console.log(error);
+      }
     }
-  }
-
+  };
 
   const addGroupList = [
     {
       title: "Select Group Time",
     },
     {
-        title : (groupTime.toDateString()),
-        onPress: ()=>{
-            console.log('press true')
-            setGroupTimePickerVis(true)}
+      title: groupTime.toDateString(),
+      onPress: () => {
+        console.log("press true");
+        setGroupTimePickerVis(true);
+      },
     },
     {
-        title : (groupTime.toTimeString()),
-        onPress: ()=>{
-            console.log('press true')
-            setGroupHourPickerVis(true)}
+      title: groupTime.toTimeString(),
+      onPress: () => {
+        console.log("press true");
+        setGroupHourPickerVis(true);
+      },
     },
     {
       content: (
@@ -261,16 +264,18 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
       ),
     },
     {
-        title: "Create",
-        containerStyle: { backgroundColor: "#6A040F" },
-        titleStyle: { color: "white" },
-        onPress: () => {setAddGroupListVisible(false), handleCreateGroup()}
+      title: "Create",
+      containerStyle: { backgroundColor: "#6A040F" },
+      titleStyle: { color: "white" },
+      onPress: () => {
+        setAddGroupListVisible(false), handleCreateGroup();
+      },
     },
     {
-        title: "Cancel",
-        containerStyle: { backgroundColor: "#6A040F" },
-        titleStyle: { color: "white" },
-        onPress: () => setAddGroupListVisible(false),
+      title: "Cancel",
+      containerStyle: { backgroundColor: "#6A040F" },
+      titleStyle: { color: "white" },
+      onPress: () => setAddGroupListVisible(false),
     },
   ];
 
@@ -578,36 +583,34 @@ export default function RestaurantProfileScreen({ navigation, route }: Props) {
                     onPress={() => setAddGroupListVisible(true)}
                     buttonStyle={styles.button}
                   />
-                  {groupTimePickerVis? 
-                    <DateTimePicker 
-                        mode = "date"  
-                        value={groupTime}
-                        onChange = {(event: DateTimePickerEvent, date?: Date) => {
-                            setGroupTimePickerVis(false);
-                            const {
-                                type,
-                                nativeEvent: {timestamp},
-                            } = event;  
-                            if(date) setGroupTime(date);         
-                        }}
+                  {groupTimePickerVis ? (
+                    <DateTimePicker
+                      mode="date"
+                      value={groupTime}
+                      onChange={(event: DateTimePickerEvent, date?: Date) => {
+                        setGroupTimePickerVis(false);
+                        const {
+                          type,
+                          nativeEvent: { timestamp },
+                        } = event;
+                        if (date) setGroupTime(date);
+                      }}
                     />
-                    :
-                    null}
-                  {groupHourPickerVis? 
-                    <DateTimePicker 
-                        mode = "time"  
-                        value={groupTime}
-                        onChange = {(event: DateTimePickerEvent, date?: Date) => {
-                            setGroupHourPickerVis(false);
-                            const {
-                                type,
-                                nativeEvent: {timestamp},
-                            } = event;  
-                            if(date) setGroupTime(date);  
-                        }}
+                  ) : null}
+                  {groupHourPickerVis ? (
+                    <DateTimePicker
+                      mode="time"
+                      value={groupTime}
+                      onChange={(event: DateTimePickerEvent, date?: Date) => {
+                        setGroupHourPickerVis(false);
+                        const {
+                          type,
+                          nativeEvent: { timestamp },
+                        } = event;
+                        if (date) setGroupTime(date);
+                      }}
                     />
-                    :
-                    null}
+                  ) : null}
                   {/*//@ts-ignore*/}
                   <BottomSheet modalProps={{}} isVisible={addGroupListVisible}>
                     {addGroupList.map((l, i) => (
