@@ -120,12 +120,17 @@ export async function joinGroup(
     const response = await updateGroupMembership(ETToken, groupID, true);
     return response;
   } catch (error) {
-    // Handle the error
-    return Promise.reject(
+    // Throw the error
+    throw new Error(
       error instanceof Error
         ? error.message ?? "Unknown Error"
         : "Unknown Error"
     );
+    // return Promise.reject(
+    //   error instanceof Error
+    //     ? error.message ?? "Unknown Error"
+    //     : "Unknown Error"
+    // );
   }
 }
 
@@ -143,8 +148,8 @@ export async function leaveGroup(
     const response = await updateGroupMembership(ETToken, groupID, false);
     return response;
   } catch (error) {
-    // Handle the error
-    return Promise.reject(
+    // Throw the error
+    throw new Error(
       error instanceof Error
         ? error.message ?? "Unknown Error"
         : "Unknown Error"
