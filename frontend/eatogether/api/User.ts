@@ -13,6 +13,7 @@ export enum Gender {
   male = "M",
   female = "F",
   notDisclosed = "ND",
+  nonBinary = "NB",
 }
 
 export type User = {
