@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "left",
     paddingVertical: 5,
-    marginTop: 50,
+    marginTop: 10,
     marginLeft: 15,
     fontSize: 16,
   },

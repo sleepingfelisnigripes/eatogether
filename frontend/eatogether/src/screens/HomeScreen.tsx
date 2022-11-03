@@ -7,6 +7,7 @@ import {
   Image,
   TouchableHighlight,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -149,7 +150,7 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
   }, [followMe]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, justifyContent: "flex-start" }}>
       <View style={styles.bannerContainer}>
         <Text style={styles.greetings}>
           {greetings + ", "}
@@ -276,22 +277,22 @@ export default function HomeScreen({ navigation }: Props): JSX.Element {
           />
         </>
       )}
-    </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   bannerContainer: {
-    flex: 1.1,
+    flex: 1,
+    maxHeight: 70,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#E85D04",
   },
   greetings: {
     flex: 5,
     fontSize: 20,
-    marginBottom: 10,
     marginLeft: 20,
     color: "#ffffff",
     fontWeight: "500",

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { StreamChat, Channel as ChannelType } from "stream-chat";
 import {
@@ -70,40 +76,44 @@ export default function MyGroupsScreen() {
   if (!clientReady) return null;
 
   return (
-    <OverlayProvider topInset={60}>
-      <TouchableOpacity onPress={onBackPress} disabled={!channel}>
-        <View style={{ height: 80, paddingLeft: 16, paddingTop: 40 }}>
-          {channel && <Text style={{ marginTop: 10, fontSize: 25 }}>Back</Text>}
+    <SafeAreaView style={{ flex: 1, justifyContent: "flex-start" }}>
+      <OverlayProvider topInset={20}>
+        <TouchableOpacity onPress={onBackPress} disabled={!channel}>
+          <View style={{ height: 80, paddingLeft: 16, paddingTop: 30 }}>
+            {channel && (
+              <Text style={{ marginTop: 10, fontSize: 25 }}>Back</Text>
+            )}
+          </View>
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Chat client={client}>
+            {channel ? (
+              <Channel
+                channel={channel}
+                keyboardVerticalOffset={60}
+                thread={thread}
+                threadList={!!thread}
+              >
+                {thread ? (
+                  <Thread />
+                ) : (
+                  <>
+                    <MessageList onThreadSelect={setThread} />
+                    <MessageInput />
+                  </>
+                )}
+              </Channel>
+            ) : (
+              <ChannelList
+                filters={filters}
+                sort={{ last_message_at: -1 }}
+                onSelect={setChannel}
+              />
+            )}
+          </Chat>
         </View>
-      </TouchableOpacity>
-      <View style={{ flex: 1 }}>
-        <Chat client={client}>
-          {channel ? (
-            <Channel
-              channel={channel}
-              keyboardVerticalOffset={60}
-              thread={thread}
-              threadList={!!thread}
-            >
-              {thread ? (
-                <Thread />
-              ) : (
-                <>
-                  <MessageList onThreadSelect={setThread} />
-                  <MessageInput />
-                </>
-              )}
-            </Channel>
-          ) : (
-            <ChannelList
-              filters={filters}
-              sort={{ last_message_at: -1 }}
-              onSelect={setChannel}
-            />
-          )}
-        </Chat>
-      </View>
-    </OverlayProvider>
+      </OverlayProvider>
+    </SafeAreaView>
   );
 }
 
